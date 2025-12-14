@@ -1,76 +1,210 @@
 {% extends 'base.html' %}
 {% block i %}
-
 {% load static %}
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<div  class="show-row">
-    <h3>Dashbord / Table / Last</h3>
-       <form method="post" id="my-form" >
-        {% csrf_token %}
-        {{form}}
-    </form>
 
-</div>
-<div class="projects">
-
-  <div class ="tables" >
-     <table>
-
-    <thead class="DIV">
-        <tr>
-            <th>Nom <img  id="Capteur-logo" src="{% static 'images/dht11.jpg' %}" alt="Capteur Image"></th>
-            <th>Temperature <img  id="Temperature-logo" src="{% static 'images/temp.jpg' %}" alt="Temperature Image"></th>
-            <th>Humidité  <img id="Humidity-logo" src="{% static 'images/humidity.jpg' %}" alt="Humidity Image"></th>
-            <th>Date <img id="Humidity-logo" src="{% static 'images/time.jpg' %}" alt="Humidity Image"> </th>
-        </tr>
-    </thead>
-    <tbody>
-
-        <tr>
-            <td><a href="{% url 'myChartTemp' %}" >DHT 11</a></td>
-<td>{{ valeurs.temp }} </td>
-            <td>{{ valeurs.hum }}</td>
-            <td>{{ valeurs.date }}</td>
-        </tr>
-
-    </tbody>
-</table>
-
-<p> ce tableau présente les mesures actuelles de température et d'humidité enregistrées par le capteur DHT11. Ces données sont essentielles pour surveiller et ajuster les conditions environnementales en temps réel.</p>
-</div >
-<button id='csv' >Télecharger csv</button>
-
-     </div>
-  <script>
-
-    var selectEl = $('#mon_select');
-
-    selectEl.change(function() {
-        $('#my-form').submit();
-    });
-
-    var downloadButton = document.getElementById('csv');
-downloadButton.addEventListener('click', function() {
-var xhr = new XMLHttpRequest();
-xhr.open('GET', '/download_csv/', true);
-xhr.responseType = 'blob';
-xhr.onload = function() {
-if (xhr.status === 200) {
-  var url = window.URL.createObjectURL(xhr.response);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'model_values.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+<style>
+/* ===== Global ===== */
+body {
+    background: #f4f6f9;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
 }
-};
-xhr.send();
+
+.show-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+.show-row h3 {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* ===== Table Card ===== */
+.projects {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.tables {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.tables table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tables thead {
+    background: #f9fafb;
+}
+
+.tables th {
+    padding: 15px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #6b7280;
+}
+
+.tables td {
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid #e5e7eb;
+    font-size: 15px;
+}
+
+.tables tbody tr:hover {
+    background: #f3f4f6;
+}
+
+/* ===== Icons ===== */
+#Capteur-logo,
+#Temperature-logo,
+#Humidity-logo {
+    width: 26px;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+/* ===== Link ===== */
+.tables a {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.tables a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Description ===== */
+.tables p {
+    margin-top: 20px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ===== CSV Button ===== */
+#csv {
+    margin-top: 25px;
+    background: linear-gradient(135deg, #10b981, #22c55e);
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+    transition: all 0.2s ease;
+}
+
+#csv:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .tables table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    .tables tr {
+        margin-bottom: 15px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .tables td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .tables td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        font-weight: 600;
+        color: #6b7280;
+    }
+}
+</style>
+
+<div class="show-row">
+    <h3>📊 Dashboard / Table / Last</h3>
+    <form method="post" id="my-form">
+        {% csrf_token %}
+        {{ form }}
+    </form>
+</div>
+
+<div class="projects">
+    <div class="tables">
+        <table>
+            <thead>
+                <tr>
+                    <th>Capteur <img id="Capteur-logo" src="{% static 'images/dht11.jpg' %}"></th>
+                    <th>Température <img id="Temperature-logo" src="{% static 'images/temp.jpg' %}"></th>
+                    <th>Humidité <img id="Humidity-logo" src="{% static 'images/humidity.jpg' %}"></th>
+                    <th>Date <img id="Humidity-logo" src="{% static 'images/time.jpg' %}"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="{% url 'myChartTemp' %}">DHT11</a></td>
+                    <td>{{ valeurs.temp }} °C</td>
+                    <td>{{ valeurs.hum }} %</td>
+                    <td>{{ valeurs.date }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            Ce tableau affiche les dernières mesures de température et d'humidité collectées par le capteur DHT11.
+            Il permet une surveillance rapide et fiable des conditions environnementales en temps réel.
+        </p>
+
+        <button id="csv">⬇ Télécharger CSV</button>
+    </div>
+</div>
+
+<script>
+$('#mon_select').change(function() {
+    $('#my-form').submit();
 });
-// Fonction pour recharger la page toutes les minutes
-    setInterval(function() {
-        location.reload();
-    }, 10000); // 6000000 millisecondes = 1 minute (ou comme vous voullez)
- 
+
+document.getElementById('csv').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/download_csv/', true);
+    xhr.responseType = 'blob';
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var url = window.URL.createObjectURL(xhr.response);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'model_values.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    };
+    xhr.send();
+});
+
+// Auto refresh every 10s (change if needed)
+setInterval(() => location.reload(), 10000);
 </script>
+
 {% endblock i %}

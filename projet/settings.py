@@ -31,18 +31,22 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',  # pour Django REST Framework
+    'corsheaders',     # pour gérer le CORS
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'DHT',
-    'rest_framework',
     'twilio',
+    'DHT',
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'projet.urls'
@@ -135,4 +140,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '*******@gmail.com'
 EMAIL_HOST_PASSWORD = '****************'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+CORS_ALLOW_ALL_ORIGINS = True
 
