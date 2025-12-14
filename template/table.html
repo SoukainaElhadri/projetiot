@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="data-dashboard">
+    <div class="dashboard-header">
+        <div class="header-title">
+            <h1><i class="fas fa-table"></i> Données du Capteur DHT11</h1>
+            <p class="subtitle">Surveillance des conditions environnementales</p>
+        </div>
+
+        <div class="header-actions">
+            <div class="action-group">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="dataSearch" placeholder="Rechercher..." class="search-input">
+                </div>
+                <button class="action-btn export-btn" id="exportCSV">
+                    <i class="fas fa-file-csv"></i> Exporter CSV
+                </button>
+                <button class="action-btn refresh-btn" id="refreshData">
+                    <i class="fas fa-sync-alt"></i> Actualiser
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="data-summary">
+        <div class="summary-card temp-card">
+            <div class="card-icon">
+                <i class="fas fa-temperature-high"></i>
+            </div>
+            <div class="card-content">
+                <h3>Température Actuelle</h3>
+                <p class="value">{{ latest.temp }} <span>°C</span></p>
+            </div>
+        </div>
+
+        <div class="summary-card hum-card">
+            <div class="card-icon">
+                <i class="fas fa-tint"></i>
+            </div>
+            <div class="card-content">
+                <h3>Humidité Actuelle</h3>
+                <p class="value">{{ latest.hum }} <span>%</span></p>
+            </div>
+        </div>
+
+        <div class="summary-card update-card">
+            <div class="card-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h3>Dernière Mise à Jour</h3>
+                <p class="value">{{ latest.timestamp|date:"H:i" }} <span>{{ latest.timestamp|date:"d/m/Y" }}</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table id="sensorDataTable" class="data-table">
+            <thead>
+                <tr>
+                    <th data-sort="id">ID <i class="fas fa-sort"></i></th>
+                    <th data-sort="temp">Température (°C) <i class="fas fa-sort"></i></th>
+                    <th data-sort="hum">Humidité (%) <i class="fas fa-sort"></i></th>
+                    <th data-sort="timestamp">Horodatage <i class="fas fa-sort"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in data %}
+                <tr>
+                    <td>{{ record.id }}</td>
+                    <td>{{ record.temp }}</td>
+                    <td>{{ record.hum }}</td>
+                    <td>{{ record.timestamp|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container">
+        <div class="pagination-info">
+            Affichage de {{ data.start_index }} à {{ data.end_index }} sur {{ data.paginator.count }} entrées
+        </div>
+
+        <div class="pagination-controls">
+            {% if data.has_previous %}
+                <a href="?page=1" class="pagination-btn first-page"><i class="fas fa-angle-double-left"></i></a>
+                <a href="?page={{ data.previous_page_number }}" class="pagination-btn prev-page"><i class="fas fa-angle-left"></i></a>
+            {% endif %}
+
+            <div class="page-numbers">
+                {% for num in data.paginator.page_range %}
+                    {% if data.number == num %}
+                        <span class="current-page">{{ num }}</span>
+                    {% elif num > data.number|add:'-3' and num < data.number|add:'3' %}
+                        <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if data.has_next %}
+                <a href="?page={{ data.next_page_number }}" class="pagination-btn next-page"><i class="fas fa-angle-right"></i></a>
+                <a href="?page={{ data.paginator.num_pages }}" class="pagination-btn last-page"><i class="fas fa-angle-double-right"></i></a>
+            {% endif %}
+        </div>
+
+        <div class="page-size-selector">
+            <label for="pageSize">Afficher :</label>
+            <select id="pageSize" class="page-size-select">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,217 @@
+<!-- json_data.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Données JSON - IoT Dashboard</title>
+    <!-- Add your CSS links here -->
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-database"></i> Données JSON Brutes</h1>
+        
+        <div class="json-viewer">
+            <div class="json-header">
+                <h3>Données des capteurs en temps réel</h3>
+                <button id="refresh-btn"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                <button id="copy-btn"><i class="fas fa-copy"></i> Copier JSON</button>
+                <button id="download-btn"><i class="fas fa-download"></i> Télécharger</button>
+            </div>
+            
+            <pre id="json-display">
+<!-- Your JSON data will be displayed here -->
+{% if sensor_data %}
+{{ sensor_data|safe }}
+{% else %}
+{
+  "status": "Chargement...",
+  "timestamp": "{% now "Y-m-d H:i:s" %}",
+  "sensors": [
+    {
+      "id": "sensor_001",
+      "type": "temperature",
+      "value": 23.5,
+      "unit": "°C",
+      "timestamp": "{% now "Y-m-d H:i:s" %}"
+    },
+    {
+      "id": "sensor_002",
+      "type": "humidity",
+      "value": 65.2,
+      "unit": "%",
+      "timestamp": "{% now "Y-m-d H:i:s" %}"
+    }
+  ]
+}
+{% endif %}
+            </pre>
+        </div>
+        
+        <div class="api-info">
+            <h3><i class="fas fa-code"></i> Points d'API Disponibles</h3>
+            <div class="api-endpoints">
+                <div class="endpoint">
+                    <code>GET /api/sensors/all/</code>
+                    <p>Toutes les données des capteurs</p>
+                </div>
+                <div class="endpoint">
+                    <code>GET /api/sensors/latest/</code>
+                    <p>Dernières lectures des capteurs</p>
+                </div>
+                <div class="endpoint">
+                    <code>GET /api/sensors/history/?hours=24</code>
+                    <p>Historique des dernières 24 heures</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // JSON syntax highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const jsonDisplay = document.getElementById('json-display');
+            const copyBtn = document.getElementById('copy-btn');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            // Format JSON with syntax highlighting
+            function formatJSON(jsonString) {
+                try {
+                    const obj = JSON.parse(jsonString);
+                    return JSON.stringify(obj, null, 2)
+                        .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, 
+                            function(match) {
+                                let cls = 'json-value';
+                                if (/^"/.test(match)) {
+                                    if (/:$/.test(match)) {
+                                        cls = 'json-key';
+                                    } else {
+                                        cls = 'json-string';
+                                    }
+                                } else if (/true|false/.test(match)) {
+                                    cls = 'json-boolean';
+                                } else if (/null/.test(match)) {
+                                    cls = 'json-null';
+                                } else if (/^\d+$/.test(match)) {
+                                    cls = 'json-number';
+                                }
+                                return `<span class="${cls}">${match}</span>`;
+                            });
+                } catch (e) {
+                    return jsonString;
+                }
+            }
+            
+            // Copy JSON to clipboard
+            copyBtn.addEventListener('click', function() {
+                const text = jsonDisplay.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copié!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+            
+            // Refresh data
+            refreshBtn.addEventListener('click', function() {
+                fetch('/api/sensors/latest/')
+                    .then(response => response.json())
+                    .then(data => {
+                        jsonDisplay.innerHTML = formatJSON(JSON.stringify(data, null, 2));
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            });
+            
+            // Download JSON
+            downloadBtn.addEventListener('click', function() {
+                const data = jsonDisplay.textContent;
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sensor-data-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+    
+    <style>
+        .json-viewer {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow: auto;
+        }
+        
+        .json-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+        
+        #json-display {
+            color: #f8f8f2;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        
+        .json-key { color: #ff79c6; }
+        .json-string { color: #f1fa8c; }
+        .json-number { color: #bd93f9; }
+        .json-boolean { color: #ff79c6; }
+        .json-null { color: #ff79c6; }
+        
+        button {
+            background: linear-gradient(135deg, #00d4ff, #0088ff);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+        
+        .api-endpoints {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .endpoint {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #00d4ff;
+        }
+        
+        .endpoint code {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: #00d4ff;
+            font-family: monospace;
+            display: block;
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+    </style>
+</body>
+</html>

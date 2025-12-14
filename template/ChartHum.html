@@ -1,0 +1,611 @@
+{% extends 'base.html' %}
+{% block i %}
+
+<style>
+  :root {
+    --primary-color: #28a745;
+    --primary-dark: #1e7e34;
+    --secondary-color: #2c3e50;
+    --light-gray: #f8f9fa;
+    --border-color: #dee2e6;
+    --text-light: #6c757d;
+  }
+
+  .container-hum {
+    max-width: 1200px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .header-section {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    color: var(--secondary-color);
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    color: var(--text-light);
+    font-size: 1.1rem;
+  }
+
+  .controls-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 1rem;
+  }
+
+  .period-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+  }
+
+  .period-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--primary-color);
+    background: white;
+    color: var(--primary-color);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .period-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+  }
+
+  .period-btn.active {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .date-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .date-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .date-input-group label {
+    font-weight: 600;
+    color: var(--secondary-color);
+  }
+
+  #date-input-hum {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+
+  #date-input-hum:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+  }
+
+  .action-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .action-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+  }
+
+  .period-display {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    margin: 1rem 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  }
+
+  .period-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .chart-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative;
+    height: 500px;
+  }
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    z-index: 10;
+  }
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-color);
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .container-hum {
+      padding: 1rem;
+    }
+    
+    .title {
+      font-size: 1.8rem;
+    }
+    
+    .period-controls {
+      flex-direction: column;
+    }
+    
+    .period-btn {
+      width: 100%;
+    }
+    
+    .date-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .chart-container {
+      height: 400px;
+      padding: 1rem;
+    }
+  }
+</style>
+
+<div class="container-hum">
+  <div class="header-section">
+    <h1 class="title">📊 Tableau de Bord Humidité</h1>
+    <p class="subtitle">Suivez l'humidité en temps réel et analysez les tendances</p>
+  </div>
+
+  <div class="controls-container">
+    <div class="period-controls">
+      <button class="period-btn active" id="btn-jour-hum" data-period="jour">
+        <span class="btn-icon">📅</span> Aujourd'hui
+      </button>
+      <button class="period-btn" id="btn-semaine-hum" data-period="semaine">
+        <span class="btn-icon">📆</span> Cette semaine
+      </button>
+      <button class="period-btn" id="btn-mois-hum" data-period="mois">
+        <span class="btn-icon">📊</span> Ce mois
+      </button>
+    </div>
+
+    <div class="date-controls">
+      <div class="date-input-group">
+        <label for="date-input-hum">📅 Date spécifique :</label>
+        <input type="date" id="date-input-hum" />
+      </div>
+      <button class="action-btn" id="btn-date-hum">
+        <span class="btn-icon">🔍</span> Afficher
+      </button>
+    </div>
+  </div>
+
+  <div class="period-display">
+    <p class="period-text" id="periode-hum">Chargement des données...</p>
+  </div>
+
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-value" id="current-value">--%</div>
+      <div class="stat-label">Humidité actuelle</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="avg-value">--%</div>
+      <div class="stat-label">Moyenne</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="min-value">--%</div>
+      <div class="stat-label">Minimum</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="max-value">--%</div>
+      <div class="stat-label">Maximum</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+    <canvas id="graphique-hum"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1/dist/chartjs-adapter-moment.min.js"></script>
+
+<script>
+  class HumidityDashboard {
+    constructor() {
+      this.chart = null;
+      this.currentPeriod = 'jour';
+      this.init();
+    }
+
+    init() {
+      this.initElements();
+      this.initEventListeners();
+      this.loadInitialData();
+    }
+
+    initElements() {
+      this.elements = {
+        periodDisplay: document.getElementById('periode-hum'),
+        chartCanvas: document.getElementById('graphique-hum'),
+        loadingOverlay: document.getElementById('loading-overlay'),
+        dateInput: document.getElementById('date-input-hum'),
+        periodButtons: document.querySelectorAll('.period-btn'),
+        stats: {
+          current: document.getElementById('current-value'),
+          avg: document.getElementById('avg-value'),
+          min: document.getElementById('min-value'),
+          max: document.getElementById('max-value')
+        }
+      };
+
+      // Set default date to today
+      this.elements.dateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    initEventListeners() {
+      // Period buttons
+      this.elements.periodButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => this.handlePeriodChange(e));
+      });
+
+      // Date button
+      document.getElementById('btn-date-hum').addEventListener('click', () => this.handleDateSelect());
+
+      // Date input enter key
+      this.elements.dateInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') this.handleDateSelect();
+      });
+    }
+
+    handlePeriodChange(event) {
+      const period = event.currentTarget.dataset.period;
+      this.setActivePeriod(period);
+      
+      switch(period) {
+        case 'jour':
+          this.updatePeriodDisplay('jour');
+          this.loadData('/chart-data-jour/');
+          break;
+        case 'semaine':
+          this.updatePeriodDisplay('semaine');
+          this.loadData('/chart-data-semaine/');
+          break;
+        case 'mois':
+          this.updatePeriodDisplay('mois');
+          this.loadData('/chart-data-mois/');
+          break;
+      }
+    }
+
+    handleDateSelect() {
+      const date = this.elements.dateInput.value;
+      if (!date) {
+        this.showNotification('Veuillez sélectionner une date.', 'warning');
+        return;
+      }
+      this.updatePeriodDisplay('date', date);
+      this.loadData(`/chart-data-date-hum/?date=${date}`);
+    }
+
+    setActivePeriod(period) {
+      this.currentPeriod = period;
+      this.elements.periodButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.period === period);
+      });
+    }
+
+    updatePeriodDisplay(type, dateString = null) {
+      const now = new Date();
+      let text = '';
+      
+      switch(type) {
+        case 'jour':
+          text = `Aujourd'hui - ${now.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+          break;
+        case 'semaine':
+          const weekStart = new Date(now);
+          weekStart.setDate(now.getDate() - 6);
+          text = `Du ${weekStart.toLocaleDateString('fr-FR')} au ${now.toLocaleDateString('fr-FR')}`;
+          break;
+        case 'mois':
+          const monthStart = new Date(now);
+          monthStart.setDate(now.getDate() - 29);
+          text = `Du ${monthStart.toLocaleDateString('fr-FR')} au ${now.toLocaleDateString('fr-FR')}`;
+          break;
+        case 'date':
+          const date = new Date(dateString);
+          text = `Date spécifique - ${date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+          break;
+        default:
+          text = 'Dernières mesures d\'humidité';
+      }
+      
+      this.elements.periodDisplay.textContent = text;
+    }
+
+    async loadData(url) {
+      this.showLoading(true);
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        this.renderChart(data);
+        this.updateStats(data);
+      } catch (error) {
+        console.error('Erreur lors du chargement des données:', error);
+        this.showNotification('Erreur lors du chargement des données', 'error');
+      } finally {
+        this.showLoading(false);
+      }
+    }
+
+    renderChart(data) {
+      const ctx = this.elements.chartCanvas.getContext('2d');
+      
+      // Destroy existing chart
+      if (this.chart) {
+        this.chart.destroy();
+      }
+
+      this.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.temps.map(d => new Date(d)),
+          datasets: [{
+            label: 'Humidité (%)',
+            data: data.humidity,
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            borderWidth: 3,
+            pointRadius: 4,
+            pointBackgroundColor: '#28a745',
+            pointBorderColor: 'white',
+            pointBorderWidth: 2,
+            pointHoverRadius: 8,
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          tooltips: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function(tooltipItem) {
+                return `Humidité: ${tooltipItem.value}%`;
+              }
+            }
+          },
+          scales: {
+            xAxes: [{
+              type: 'time',
+              time: {
+                unit: this.getTimeUnit(),
+                tooltipFormat: 'DD/MM/YYYY HH:mm',
+                displayFormats: {
+                  hour: 'HH:mm',
+                  day: 'DD/MM',
+                  week: 'DD/MM',
+                  month: 'MM/YYYY'
+                }
+              },
+              gridLines: {
+                color: 'rgba(0,0,0,0.05)'
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero: false,
+                callback: value => value + '%',
+                maxTicksLimit: 8
+              },
+              gridLines: {
+                color: 'rgba(0,0,0,0.05)'
+              }
+            }]
+          },
+          legend: {
+            display: false
+          },
+          hover: {
+            mode: 'nearest',
+            intersect: false
+          },
+          elements: {
+            line: {
+              tension: 0.2
+            }
+          }
+        }
+      });
+    }
+
+    getTimeUnit() {
+      switch(this.currentPeriod) {
+        case 'jour': return 'hour';
+        case 'semaine': return 'day';
+        case 'mois': return 'day';
+        default: return 'hour';
+      }
+    }
+
+    updateStats(data) {
+      const humidities = data.humidity;
+      if (humidities.length === 0) return;
+
+      const current = humidities[humidities.length - 1];
+      const avg = humidities.reduce((a, b) => a + b, 0) / humidities.length;
+      const min = Math.min(...humidities);
+      const max = Math.max(...humidities);
+
+      this.elements.stats.current.textContent = `${current.toFixed(1)}%`;
+      this.elements.stats.avg.textContent = `${avg.toFixed(1)}%`;
+      this.elements.stats.min.textContent = `${min.toFixed(1)}%`;
+      this.elements.stats.max.textContent = `${max.toFixed(1)}%`;
+    }
+
+    loadInitialData() {
+      this.updatePeriodDisplay('jour');
+      this.loadData('/chart-data-jour/');
+    }
+
+    showLoading(show) {
+      this.elements.loadingOverlay.style.display = show ? 'flex' : 'none';
+    }
+
+    showNotification(message, type = 'info') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+      `;
+
+      notification.style.backgroundColor = type === 'error' ? '#dc3545' : 
+                                          type === 'warning' ? '#ffc107' : '#28a745';
+
+      document.body.appendChild(notification);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+
+      // Add animation styles
+      if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+          @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+  }
+
+  // Initialize dashboard when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new HumidityDashboard();
+  });
+</script>
+
+{% endblock %}

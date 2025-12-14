@@ -1,0 +1,31 @@
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-cloud"></i>
+            <span>IoT Surveillance</span>
+        </div>
+
+        <div class="navbar-links">
+            <ul>
+                <li><a href="{% url 'table' %}" class="nav-link"><i class="fas fa-table"></i> Tableau de données</a></li>
+                <li><a href="{% url 'myChartTemp' %}" class="nav-link"><i class="fas fa-temperature-high"></i> Température</a></li>
+                <li><a href="{% url 'myChartHum' %}" class="nav-link"><i class="fas fa-tint"></i> Humidité</a></li>
+                <li><a href="{% url 'api_list' %}" class="nav-link"><i class="fas fa-code"></i> API JSON</a></li>
+            </ul>
+        </div>
+
+        <div class="navbar-actions">
+            <div class="dropdown">
+                <button class="dropdown-btn"><i class="fas fa-user-circle"></i> Mon compte</button>
+                <div class="dropdown-content">
+                    <a href="#"><i class="fas fa-user-plus"></i> S'inscrire</a>
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+</header>
