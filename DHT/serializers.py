@@ -4,3 +4,4 @@ class DHT11serialize(serializers.ModelSerializer) :
     class Meta :
         model = Dht11
         fields ='__all__'
+        read_only_fields = ['id', 'dt']
