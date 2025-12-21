@@ -1,9 +1,70 @@
- {% load static %}
-<link rel="stylesheet" href="{% static 'css/chart.css' %}">
-<link rel="stylesheet" href="{% static 'css/index.css' %}">
- <link rel="stylesheet" href="{% static 'css/table.css' %}">
- {% include 'navBar.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Surveillance IoT{% endblock %}</title>
 
+    <!-- Fichiers CSS -->
+    <link rel="stylesheet" href="{% static 'css/charts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
 
-{% block i %}
-{% endblock %}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1/dist/chartjs-adapter-moment.min.js"></script>
+
+    <style>
+        /* Styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .main-content {
+            padding: 20px;
+            margin-top: 60px; /* Pour la navbar fixe */
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    {% include 'navBar.html' %}
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+        {% block i %}
+        {% endblock %}
+    </div>
+
+    <!-- Fichiers JavaScript -->
+    <script src="{% static 'js/charts.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        // Code JavaScript global si nécessaire
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Application IoT chargée');
+        });
+    </script>
+</body>
+</html>
