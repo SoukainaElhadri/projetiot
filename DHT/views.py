@@ -74,10 +74,7 @@ def incident_detail(request, incident_id):
         if 'acknowledge' in request.POST:
             incident.acknowledged_by = request.user
             incident.acknowledged_at = timezone.now()
-            incident.resolved = True # Keep it resolved or just ack? User said "confirme is seen", maybe auto-resolve? Keeping as just Ack helps track who saw it.
-            # But earlier user said "green = solved". Let's assume Ack doesn't resolve, but "fixing temp" resolves.
-            # Wait, user request: "send email and it should confirem is seen it" -> this is Ack.
-            # "can leave commnet" -> comment.
+            # incident.resolved = True  <-- Removed: Only safe temp resolves it
             incident.save()
             return redirect('incident_detail', incident_id=incident.id)
         
@@ -235,7 +232,7 @@ def custom_login_redirect(request):
     elif user.groups.filter(name='Manager').exists():
         return redirect('incident_list')
     else:
-        return redirect('home')
+        return redirect('incident_list')
 
 
 # ////////////////////////// Json

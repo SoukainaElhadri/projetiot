@@ -1,387 +1,280 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* --- Reset & Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-<style>
-    /* ==============================================
-       1. GLOBAL VARIABLES & RESET
-       ============================================== */
-    :root {
-        --primary-dark: #0f172a;
-        --primary-light: #1e293b;
-        --accent: #06b6d4;        /* Cyan */
-        --accent-hover: #0891b2;
-        --bg-body: #f1f5f9;
-        --white: #ffffff;
-        --text-main: #334155;
-        --text-muted: #94a3b8;
-        --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+body {
+    /* Use the imported Google Font */
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6; /* Light gray body background for contrast */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+/* --- Main Header & Navbar Container --- */
+.header {
+    /* A deep, tech-blue background */
+    background: linear-gradient(to right, #141e30, #243b55);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 1400px; /* Keep content from getting too wide on huge screens */
+    margin: 0 auto;
+}
+
+/* --- Navbar Brand (Logo) --- */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #00ddd3; /* Bright Cyan accent color */
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand i {
+    font-size: 1.8rem;
+}
+
+/* --- Navbar Links --- */
+.navbar-links ul {
+    display: flex;
+    gap: 2rem; /* Spacing between links */
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8); /* Slightly muted white */
+    padding: 0.5rem 0;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-link i {
+    font-size: 1.1rem;
+}
+
+/* Hover Effect for Links - The "Underline Slide" */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #00ddd3;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #ffffff;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* --- Navbar Actions (Dropdown) --- */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown {
+    position: relative;
+}
+
+/* Styling the main button */
+.dropdown-btn {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px; /* Pill shape */
+    transition: all 0.3s ease;
+}
+
+.dropdown-btn i {
+    font-size: 1.2rem;
+    color: #00ddd3;
+}
+
+.dropdown-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #00ddd3;
+}
+
+/* The Dropdown Menu Content */
+/* --- Fix for the Dropdown --- */
+
+/* 1. Position the menu directly below */
+.dropdown-content {
+    opacity: 0;
+    visibility: hidden;
+    
+    position: absolute;
+    right: 0;
+    top: 100%;           /* Align directly to the bottom of the button */
+    margin-top: 10px;    /* Use margin for the visual space instead of top% */
+    
+    background-color: #ffffff;
+    min-width: 200px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    overflow: visible;   /* IMPORTANT: Must be visible so the bridge works */
+    z-index: 1001;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform: translateY(10px);
+}
+
+/* 2. THE INVISIBLE BRIDGE (This fixes your problem) */
+/* This creates an invisible block that fills the gap between the button and menu */
+.dropdown-content::before {
+    content: "";
+    position: absolute;
+    top: -20px;          /* Extend upwards to touch the button */
+    left: 0;
+    width: 100%;
+    height: 20px;        /* Height of the gap */
+    background: transparent; /* It is invisible */
+}
+
+/* 3. The Hover State */
+.dropdown:hover .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+/* Show Dropdown on Hover */
+/* .dropdown:hover .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+} */
+
+.dropdown-content a {
+    color: #2c3e50;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.dropdown-content a i {
+    color: #6c757d;
+    width: 20px; /* Ensure icons align neatly */
+    text-align: center;
+    transition: color 0.2s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f0f2f5;
+    color: #00ddd3;
+}
+
+.dropdown-content a:hover i {
+    color: #00ddd3;
+}
+
+/* --- Mobile Toggle Icon --- */
+.navbar-toggle {
+    display: none; /* Hidden on desktop */
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 960px) {
+    .navbar-links,
+    .navbar-actions {
+        /* For this pure CSS example, we hide them on mobile.
+           To make a functional mobile menu requires JavaScript. */
+        display: none;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+}
+    </style>
+    <header class="header">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <i class="fas fa-cloud"></i>
+                <span>IoT Surveillance</span>
+            </div>
+
+            <div class="navbar-links">
+                <ul>
+                    <li><a href="{% url 'table' %}" class="nav-link"><i class="fas fa-table"></i> Tableau de données</a></li>
+                    <li><a href="{% url 'myChartTemp' %}" class="nav-link"><i class="fas fa-temperature-high"></i> Température</a></li>
+                    <li><a href="{% url 'myChartHum' %}" class="nav-link"><i class="fas fa-tint"></i> Humidité</a></li>
+                    <li><a href="{% url 'api_list' %}" class="nav-link"><i class="fas fa-code"></i> API JSON</a></li>
+                </ul>
+            </div>
+
+            <div class="navbar-actions">
+    <div class="dropdown">
         
-        /* Gradients */
-        --grad-temp: linear-gradient(135deg, #ff9966, #ff5e62);
-        --grad-hum: linear-gradient(135deg, #56ccf2, #2f80ed);
-    }
+        <button class="dropdown-btn">
+            {% if user.is_authenticated %}
+                <i class="fas fa-user-check"></i> {{ user.username }}
+            {% else %}
+                <i class="fas fa-user-circle"></i> Compte
+            {% endif %}
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i>
+        </button>
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: var(--bg-body);
-        color: var(--text-main);
-    }
-
-    /* ==============================================
-       2. NAVBAR STYLES
-       ============================================== */
-    .header {
-        background: var(--primary-dark);
-        color: var(--white);
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.8rem 2rem;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-
-    /* Brand */
-    .navbar-brand {
-        font-size: 1.4rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--white);
-    }
-    .navbar-brand i { color: var(--accent); }
-
-    /* Links */
-    .navbar-links ul { display: flex; gap: 1.5rem; list-style: none; }
-    
-    .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.9rem;
-        color: var(--text-muted);
-        text-decoration: none;
-        transition: 0.3s;
-    }
-    .nav-link:hover { color: var(--accent); }
-
-    /* Dropdown (Mon Compte) */
-    .navbar-actions { position: relative; }
-    .dropdown { position: relative; display: inline-block; }
-
-    .dropdown-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 0.5rem 1.2rem;
-        border-radius: 50px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-family: inherit;
-        transition: 0.3s;
-    }
-    .dropdown-btn:hover { background: rgba(255, 255, 255, 0.2); border-color: var(--accent); }
-
-    .dropdown-content {
-        visibility: hidden;
-        opacity: 0;
-        position: absolute;
-        right: 0;
-        top: 100%;
-        margin-top: 10px; /* Space between button and menu */
-        background-color: white;
-        min-width: 200px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        transform: translateY(10px);
-        transition: all 0.2s ease;
-        overflow: hidden;
-        z-index: 1001;
-    }
-
-    /* THE FIX: Invisible bridge so menu doesn't close on mouse move */
-    .dropdown-content::before {
-        content: "";
-        position: absolute;
-        top: -20px;
-        left: 0;
-        width: 100%;
-        height: 20px;
-        background: transparent;
-    }
-
-    .dropdown:hover .dropdown-content {
-        visibility: visible;
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .dropdown-content a {
-        color: var(--text-main);
-        padding: 12px 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: 0.2s;
-    }
-    .dropdown-content a:hover { background: #f8fafc; color: var(--accent); }
-
-    /* ==============================================
-       3. DASHBOARD CONTENT
-       ============================================== */
-    .dashboard-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 2rem;
-        animation: fadeIn 0.5s ease-out;
-    }
-
-    /* Title Row */
-    .dash-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-    .dash-header h2 { font-weight: 700; color: var(--primary-light); }
-    .dash-header p { color: var(--text-muted); font-size: 0.9rem; }
-
-    /* Cards Grid */
-    .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .metric-card {
-        background: var(--white);
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: var(--shadow-card);
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: transform 0.3s;
-    }
-    .metric-card:hover { transform: translateY(-5px); }
-
-    .card-data h4 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-    .card-data h1 { font-size: 2.5rem; font-weight: 700; margin-top: 5px; }
-    
-    .card-icon {
-        width: 60px; height: 60px;
-        border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.5rem; color: white;
-    }
-
-    /* Specific Colors */
-    .temp-card .card-data h1 { color: #ff5e62; }
-    .temp-card .card-icon { background: var(--grad-temp); box-shadow: 0 8px 20px -5px rgba(255, 94, 98, 0.4); }
-    
-    .hum-card .card-data h1 { color: #2f80ed; }
-    .hum-card .card-icon { background: var(--grad-hum); box-shadow: 0 8px 20px -5px rgba(47, 128, 237, 0.4); }
-
-    /* Table Section */
-    .data-panel {
-        background: var(--white);
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: var(--shadow-card);
-    }
-
-    table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-    th { text-align: left; color: var(--text-muted); padding: 0 1.5rem; font-size: 0.8rem; text-transform: uppercase; }
-    td { background: #f8fafc; padding: 1.2rem 1.5rem; font-weight: 500; }
-    td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-    td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-
-    /* Button */
-    .btn-csv {
-        background: var(--primary-light);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex; align-items: center; gap: 8px;
-        font-family: inherit; font-size: 0.9rem;
-        transition: 0.2s;
-    }
-    .btn-csv:hover { background: var(--primary-dark); transform: translateY(-2px); }
-
-    /* Mobile Toggle */
-    .navbar-toggle { display: none; color: white; font-size: 1.5rem; cursor: pointer; }
-
-    /* Animation */
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Responsive */
-    @media (max-width: 968px) {
-        .navbar-toggle { display: block; }
-        .navbar-links { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: var(--primary-light); flex-direction: column; padding: 20px; }
-        .navbar-links.active { display: flex; }
-        .navbar-links ul { flex-direction: column; width: 100%; }
-        .navbar-actions { display: none; } /* Simplify mobile nav */
-        .dash-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-        .metrics-grid { grid-template-columns: 1fr; }
-        .data-panel { padding: 1rem; }
-    }
-</style>
-
-<header class="header">
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <i class="fas fa-cloud"></i> <span>IoT Monitor</span>
-        </div>
-
-        <div class="navbar-links">
-            <ul>
-                <li><a href="{% url 'table' %}" class="nav-link"><i class="fas fa-table"></i> Tableau</a></li>
-                <li><a href="{% url 'myChartTemp' %}" class="nav-link"><i class="fas fa-temperature-high"></i> Température</a></li>
-                <li><a href="{% url 'myChartHum' %}" class="nav-link"><i class="fas fa-tint"></i> Humidité</a></li>
-                <li><a href="{% url 'api_list' %}" class="nav-link"><i class="fas fa-code"></i> API Data</a></li>
-            </ul>
-        </div>
-
-        <div class="navbar-actions">
-            <div class="dropdown">
-                <button class="dropdown-btn">
-                    {% if user.is_authenticated %}
-                        <i class="fas fa-user-check"></i> {{ user.username }}
-                    {% else %}
-                        <i class="fas fa-user-circle"></i> Compte
-                    {% endif %}
-                    <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
-                </button>
-                <div class="dropdown-content">
-                    {% if user.is_authenticated %}
-                        <a href="#"><i class="fas fa-cog"></i> Paramètres</a>
-                        <a href="{% url 'logout' %}" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a>
-                    {% else %}
-                        <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Se connecter</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <div class="navbar-toggle"><i class="fas fa-bars"></i></div>
-    </nav>
-</header>
-
-<div class="dashboard-container">
-    
-    <div class="dash-header">
-        <div>
-            <h2>Dashboard Overview</h2>
-            <p>Live data from DHT11 Sensor</p>
-        </div>
-        <form method="post" id="my-form">
-            {% csrf_token %}
-            {{ form }}
-        </form>
-    </div>
-
-    <div class="metrics-grid">
-        <div class="metric-card temp-card">
-            <div class="card-data">
-                <h4>Température</h4>
-                <h1>{{ valeurs.temp }}°C</h1>
-            </div>
-            <div class="card-icon"><i class="fas fa-temperature-three-quarters"></i></div>
-        </div>
-        <div class="metric-card hum-card">
-            <div class="card-data">
-                <h4>Humidité</h4>
-                <h1>{{ valeurs.hum }}%</h1>
-            </div>
-            <div class="card-icon"><i class="fas fa-droplet"></i></div>
-        </div>
-    </div>
-
-    <div class="data-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h3 style="margin:0; font-size:1.1rem;">Recent Logs</h3>
-            <button id="csv" class="btn-csv"><i class="fas fa-download"></i> Export CSV</button>
-        </div>
-
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Device</th>
-                        <th>Reading</th>
-                        <th>Timestamp</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>DHT11 Sensor</strong></td>
-                        <td>
-                            <i class="fas fa-temperature-half" style="color:#ff5e62;"></i> {{ valeurs.temp }}°C &nbsp;|&nbsp;
-                            <i class="fas fa-tint" style="color:#2f80ed;"></i> {{ valeurs.hum }}%
-                        </td>
-                        <td>{{ valeurs.date }}</td>
-                        <td><a href="{% url 'myChartTemp' %}" style="color:var(--accent); text-decoration:none; font-weight:600;">View Chart</a></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="dropdown-content">
+            {% if user.is_authenticated %}
+             <li><a href="{% url 'table' %}" class="nav-link"><i class="fas fa-table"></i> Tableau de données</a></li>
+                <a href="{% url 'incident_list' %}"><i class="fas fa-cog"></i> incidents</a>
+                <a href="{% url 'logout' %}" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a>
+            {% else %}
+                <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Se connecter</a>
+                {% endif %}
         </div>
     </div>
 </div>
+            </div>
 
-<script>
-    // 1. Mobile Menu Toggle
-    document.querySelector('.navbar-toggle').addEventListener('click', function() {
-        document.querySelector('.navbar-links').classList.toggle('active');
-    });
-
-    // 2. Auto-submit filter form
-    $('#mon_select').change(function() { $('#my-form').submit(); });
-
-    // 3. CSV Download with Animation
-    document.getElementById('csv').addEventListener('click', function() {
-        const btn = this;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/download_csv/', true);
-        xhr.responseType = 'blob';
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var url = window.URL.createObjectURL(xhr.response);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = 'model_values.csv';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            }
-            btn.innerHTML = '<i class="fas fa-download"></i> Export CSV';
-        };
-        xhr.send();
-    });
-
-    // 4. Auto Refresh (10s)
-    setInterval(() => location.reload(), 10000);
-</script>
-
+            <div class="navbar-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
