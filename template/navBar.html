@@ -235,8 +235,11 @@ ul {
     <header class="header">
         <nav class="navbar">
             <div class="navbar-brand">
-                <i class="fas fa-cloud"></i>
-                <span>IoT Surveillance</span>
+                
+
+<i class='fa-solid fa-temperature-quarter' style='color: white'></i>               
+ <a href="{% url 'home' %}">ThermoGuard</a>
+
             </div>
 
             <div class="navbar-links">
@@ -245,6 +248,7 @@ ul {
                     <li><a href="{% url 'myChartTemp' %}" class="nav-link"><i class="fas fa-temperature-high"></i> Température</a></li>
                     <li><a href="{% url 'myChartHum' %}" class="nav-link"><i class="fas fa-tint"></i> Humidité</a></li>
                     <li><a href="{% url 'api_list' %}" class="nav-link"><i class="fas fa-code"></i> API JSON</a></li>
+                    <li><a href="{% url 'incident_list' %}"class="nav-link"><i class="fas fa-cog"></i> incidents</a></li>
                 </ul>
             </div>
 
@@ -262,9 +266,10 @@ ul {
 
         <div class="dropdown-content">
             {% if user.is_authenticated %}
-             <li><a href="{% url 'table' %}" class="nav-link"><i class="fas fa-table"></i> Tableau de données</a></li>
+             <li>
                 <a href="{% url 'incident_list' %}"><i class="fas fa-cog"></i> incidents</a>
                 <a href="{% url 'logout' %}" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a>
+                </li>
             {% else %}
                 <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Se connecter</a>
                 {% endif %}

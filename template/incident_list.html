@@ -99,6 +99,12 @@
           transition: color 0.2s;
       }
       .detail-link:hover { color: #2c5f96; text-decoration: underline; }
+      
+      @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.4; }
+        100% { opacity: 1; }
+      }
     </style>
   
     <div class="incident-wrapper">
@@ -126,7 +132,15 @@
                         <td class="col-temp">{{ incident.dht_reading.temp }}°C</td>
                         <td>
                             <span class="status-pill">
-                                {% if incident.resolved %}Résolu{% else %}Non résolu{% endif %}
+                                {% if incident.resolved %}
+                                    Résolu
+                                {% else %}
+                                    {% if incident.timestamp < critical_threshold %}
+                                        <span style="color: #c0392b; font-weight: bold; animation: blink 1s infinite;">⚠ CRITIQUE</span>
+                                    {% else %}
+                                        Non résolu
+                                    {% endif %}
+                                {% endif %}
                             </span>
                         </td>
                         <td>

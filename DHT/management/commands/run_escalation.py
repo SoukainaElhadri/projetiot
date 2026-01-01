@@ -45,3 +45,8 @@ class Command(BaseCommand):
                     incident.last_notification_at = now
                     incident.save()
                     self.stdout.write(self.style.SUCCESS(f'Escalated incident {incident.id} to Level 4 (Supervisor)'))
+
+            # Critical: Incident > 10 hours
+            elif time_since_creation >= 600: # 10 hours * 60 minutes
+                 self.stdout.write(self.style.ERROR(f'CRITICAL: Incident {incident.id} has been unresolved for over 10 HOURS!'))
+                 # Ideally, send another urgent email/SMS here

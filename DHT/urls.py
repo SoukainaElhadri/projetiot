@@ -33,6 +33,7 @@ urlpatterns = [
     path('redirect/', views.custom_login_redirect, name='custom_login_redirect'),
     path('logout/', views.user_logout, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('charts/', views.charts_hub, name='charts_hub'),
 
 
 ]

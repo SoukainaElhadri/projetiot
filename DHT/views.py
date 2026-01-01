@@ -63,7 +63,11 @@ def table(request):
 
 def incident_list(request):
     incidents = Incident.objects.all().order_by('-timestamp')
-    return render(request, 'incident_list.html', {'incidents': incidents})
+    critical_threshold = timezone.now() - datetime.timedelta(hours=10)
+    return render(request, 'incident_list.html', {
+        'incidents': incidents,
+        'critical_threshold': critical_threshold
+    })
 
 
 @login_required
@@ -112,6 +116,9 @@ def graphiqueTemp(request):
 
 def graphiqueHum(request):
     return render(request, 'ChartHum.html')
+
+def charts_hub(request):
+    return render(request, 'charts_hub.html')
 
 
 # Données JSON - toutes

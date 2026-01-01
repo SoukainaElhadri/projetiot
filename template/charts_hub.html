@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Choix Graphique - IoT Dashboard{% endblock %}
+
+{% block i %}
+<style>
+    /* Reusing styles from home.html for consistency */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    /* .background-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 30px 30px;
+        opacity: 0.15;
+        z-index: -1;
+    } */
+        .features {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                    margin: 20px 0;
+                }
+
+                .feature {
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 15px;
+                    padding: 20px;
+                    text-align: center;
+                    transition: transform 0.3s, background 0.3s;
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+ .header-s {
+                text-align: center;
+                margin-bottom: 25px;
+                animation: fadeInDown 1s ease-out;
+                width:80%;
+            }
+
+    h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        background: linear-gradient(to right, #00d4ff, #0088ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        color: #a0d2ff;
+        font-weight: 300;
+        margin-bottom: 40px;
+    }
+
+    .cards-container {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        animation: slideUp 1s ease-out;
+    }
+
+    .graph-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        width: 300px;
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: white;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .graph-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #00d4ff;
+        box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+    }
+
+    .icon-wrapper {
+        font-size: 3.5rem;
+        margin-bottom: 25px;
+        display: inline-block;
+        padding: 20px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        transition: transform 0.3s;
+    }
+
+    .graph-card:hover .icon-wrapper {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    .card-temp .icon-wrapper { color: #ff5e62; }
+    .card-hum .icon-wrapper { color: #2f80ed; }
+
+    .graph-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .graph-card p {
+        font-size: 0.95rem;
+        color: #b3d9ff;
+        line-height: 1.5;
+    }
+
+    .btn-back {
+        margin-top: 60px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #a0d2ff;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color 0.3s;
+        animation: fadeIn 1.5s ease-out;
+    }
+
+    .btn-back:hover { color: white; }
+
+    /* Animations */
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+</style>
+
+<div class="background-overlay"></div>
+
+<div class="container">
+    <div class="header-s  feature">
+        <h1>Visualisation Graphique</h1>
+        <p class="subtitle">Sélectionnez le type de données que vous souhaitez analyser</p>
+    </div>
+
+    <div class="cards-container">
+        <!-- Temperature Card -->
+        <a href="{% url 'myChartTemp' %}" class="graph-card card-temp">
+            <div class="icon-wrapper">
+                <i class="fas fa-temperature-high"></i>
+            </div>
+            <h3>Température</h3>
+            <p>Analysez l'évolution thermique avec des courbes détaillées et historiques.</p>
+        </a>
+
+        <!-- Humidity Card -->
+        <a href="{% url 'myChartHum' %}" class="graph-card card-hum">
+            <div class="icon-wrapper">
+                <i class="fas fa-tint"></i>
+            </div>
+            <h3>Humidité</h3>
+            <p>Suivez les variations d'humidité pour contrôler la qualité de l'air.</p>
+        </a>
+    </div>
+
+    <a href="/" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Retour à l'accueil
+    </a>
+</div>
+{% endblock %}

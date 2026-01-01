@@ -4,6 +4,55 @@
 
 <link rel="stylesheet" href="{% static 'css/charts.css' %}">
 
+<style>
+    /* Red Color Palette */
+    :root {
+        --theme-red: #e74c3c;       /* Main Red */
+        --theme-red-dark: #c0392b;  /* Darker Red for hover */
+        --theme-red-light: rgba(231, 76, 60, 0.1); /* Light background */
+    }
+
+    /* Active Buttons */
+    .period-btn.active {
+        background-color: var(--theme-red) !important;
+        border-color: var(--theme-red) !important;
+        color: white;
+    }
+
+    /* Hover state for non-active buttons */
+    .period-btn:hover:not(.active) {
+        background-color: var(--theme-red-light) !important;
+        color: var(--theme-red) !important;
+        border-color: var(--theme-red) !important;
+    }
+
+    /* Search Button */
+    .action-btn {
+        background-color: var(--theme-red) !important;
+        color: white;
+    }
+    .action-btn:hover {
+        background-color: var(--theme-red-dark) !important;
+    }
+
+    /* Stat Numbers */
+    .stat-value {
+        color: var(--theme-red) !important;
+        font-weight: 700;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        border-top-color: var(--theme-red) !important;
+    }
+    
+    /* Focus outlines for accessibility */
+    input:focus, button:focus {
+        outline-color: var(--theme-red) !important;
+        border-color: var(--theme-red) !important;
+    }
+</style>
+
 <div class="dashboard-container temp">
   <div class="header-section">
     <h1 class="title">🌡️ Tableau de Bord Température</h1>
@@ -67,11 +116,11 @@
 
   <div class="chart-legend">
     <div class="legend-item">
-      <div class="legend-color" style="background: #007bff;"></div>
+      <div class="legend-color" style="background: #e74c3c;"></div>
       <span>Température (°C)</span>
     </div>
     <div class="legend-item">
-      <div class="legend-color" style="background: rgba(0, 123, 255, 0.1); border: 1px solid #dee2e6;"></div>
+      <div class="legend-color" style="background: rgba(231, 76, 60, 0.1); border: 1px solid #e74c3c;"></div>
       <span>Zone de variation</span>
     </div>
   </div>
