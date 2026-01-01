@@ -235,11 +235,11 @@ def user_logout(request):
 def custom_login_redirect(request):
     user = request.user
     if user.is_superuser or user.groups.filter(name='Admin').exists():
-        return redirect('/admin/')
+        return redirect('table')
     elif user.groups.filter(name='Manager').exists():
-        return redirect('incident_list')
+        return redirect('table')
     else:
-        return redirect('incident_list')
+        return redirect('table')
 
 
 # ////////////////////////// Json
