@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h1 style="text-align: center; margin-bottom: 30px;">IoT Dashboard</h1>
+    
+    <div class="cards-wrapper" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+        <!-- Temperature Card -->
+        <div class="card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); padding: 20px; border-radius: 15px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <div class="card-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <i class="fas fa-thermometer-half" style="font-size: 24px; color: #d63384;"></i>
+                <h3 style="margin: 0; color: #333;">Température</h3>
+            </div>
+            <div class="card-body" style="text-align: center;">
+                <h2 id="temp-value" style="font-size: 48px; margin: 10px 0; color: #d63384;">-- °C</h2>
+                <p id="temp-time" style="color: #666; font-size: 14px;">En attente...</p>
+            </div>
+            <div class="card-footer" style="margin-top: 20px; text-align: center;">
+                <a href="{% url 'graph_temp' %}" class="btn" style="background: white; color: #d63384; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    Voir graphe température
+                </a>
+            </div>
+        </div>
+
+        <!-- Humidity Card -->
+        <div class="card" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); padding: 20px; border-radius: 15px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <div class="card-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <i class="fas fa-tint" style="font-size: 24px; color: #6f42c1;"></i>
+                <h3 style="margin: 0; color: #333;">Humidité</h3>
+            </div>
+            <div class="card-body" style="text-align: center;">
+                <h2 id="hum-value" style="font-size: 48px; margin: 10px 0; color: #6f42c1;">-- %</h2>
+                <p id="hum-time" style="color: #666; font-size: 14px;">En attente...</p>
+            </div>
+            <div class="card-footer" style="margin-top: 20px; text-align: center;">
+                <a href="{% url 'graph_hum' %}" class="btn" style="background: white; color: #6f42c1; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    Voir graphe humidité
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'dashboard.js' %}"></script>
+{% endblock %}

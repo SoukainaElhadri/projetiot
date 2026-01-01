@@ -2,209 +2,353 @@
 {% block i %}
 {% load static %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
-/* ===== Global ===== */
-body {
-    background: #f4f6f9;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+/* ===== Modern Variables ===== */
+:root {
+    --bg-app: #f0f2f5;
+    --text-dark: #1e293b;
+    --text-light: #64748b;
+    --white: #ffffff;
+    
+    /* Gradients */
+    --grad-temp: linear-gradient(135deg, #ff9966, #ff5e62);
+    --grad-hum: linear-gradient(135deg, #56ccf2, #2f80ed);
+    --grad-dark: linear-gradient(135deg, #1e293b, #0f172a);
 }
 
-.show-row {
+body {
+    background-color: var(--bg-app);
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-dark);
+}
+
+.dashboard-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* ===== Header & Filters ===== */
+.top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: white;
-    padding: 20px 25px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    margin-bottom: 25px;
+    margin-bottom: 2.5rem;
 }
 
-.show-row h3 {
+.title-section h2 {
+    font-size: 1.8rem;
     font-weight: 700;
-    color: #1f2937;
+    margin: 0;
+    color: var(--text-dark);
 }
 
-/* ===== Table Card ===== */
-.projects {
-    max-width: 1100px;
-    margin: auto;
+.title-section p {
+    margin: 5px 0 0;
+    color: var(--text-light);
+    font-size: 0.9rem;
 }
 
-.tables {
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-}
-
-.tables table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.tables thead {
-    background: #f9fafb;
-}
-
-.tables th {
-    padding: 15px;
-    font-size: 13px;
-    text-transform: uppercase;
-    color: #6b7280;
-}
-
-.tables td {
-    padding: 15px;
-    text-align: center;
-    border-top: 1px solid #e5e7eb;
-    font-size: 15px;
-}
-
-.tables tbody tr:hover {
-    background: #f3f4f6;
-}
-
-/* ===== Icons ===== */
-#Capteur-logo,
-#Temperature-logo,
-#Humidity-logo {
-    width: 26px;
-    vertical-align: middle;
-    margin-left: 6px;
-}
-
-/* ===== Link ===== */
-.tables a {
-    color: #2563eb;
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.tables a:hover {
-    text-decoration: underline;
-}
-
-/* ===== Description ===== */
-.tables p {
-    margin-top: 20px;
-    color: #6b7280;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-/* ===== CSV Button ===== */
-#csv {
-    margin-top: 25px;
-    background: linear-gradient(135deg, #10b981, #22c55e);
-    color: white;
-    border: none;
-    padding: 12px 22px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 700;
+/* Form styling to look like a pill button */
+#my-form select {
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid #e2e8f0;
+    background: var(--white);
+    color: var(--text-dark);
+    font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(16,185,129,0.3);
-    transition: all 0.2s ease;
+    outline: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-#csv:hover {
+/* ===== Metrics Grid (The "Wow" Factor) ===== */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.metric-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.metric-info h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.metric-info h1 {
+    margin: 5px 0 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+/* Card Specifics */
+.card-temp .metric-info h1 { color: #ff5e62; }
+.card-temp .icon-box { background: var(--grad-temp); box-shadow: 0 8px 20px -5px rgba(255, 94, 98, 0.4); }
+
+.card-hum .metric-info h1 { color: #2f80ed; }
+.card-hum .icon-box { background: var(--grad-hum); box-shadow: 0 8px 20px -5px rgba(47, 128, 237, 0.4); }
+
+/* Progress Bar inside Card */
+.progress-bg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: #f1f5f9;
+}
+.progress-fill {
+    height: 100%;
+    border-radius: 0 4px 4px 0;
+}
+
+/* ===== Table Section ===== */
+.data-panel {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Floating rows */
+}
+
+th {
+    text-align: left;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0 1.5rem;
+    text-transform: uppercase;
+}
+
+td {
+    background: #f8fafc;
+    padding: 1.2rem 1.5rem;
+    font-weight: 500;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+}
+
+/* Rounded corners for rows */
+td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+/* Table Visuals */
+.readout-pill {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.pill-temp { background: rgba(255, 94, 98, 0.1); color: #ff5e62; }
+.pill-hum { background: rgba(47, 128, 237, 0.1); color: #2f80ed; }
+
+/* ===== Button ===== */
+.btn-download {
+    background: var(--text-dark);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-download:hover {
+    background: #000;
     transform: translateY(-2px);
-    opacity: 0.9;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* ===== Responsive ===== */
+/* ===== Animation ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Fixes */
 @media (max-width: 768px) {
-    .tables table, thead, tbody, th, td, tr {
-        display: block;
-    }
-
-    .tables tr {
-        margin-bottom: 15px;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .tables td {
-        text-align: right;
-        position: relative;
-        padding-left: 50%;
-    }
-
-    .tables td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 15px;
-        font-weight: 600;
-        color: #6b7280;
-    }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .top-bar { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .data-panel { padding: 1rem; }
+    td, th { padding: 1rem; }
 }
 </style>
 
-<div class="show-row">
-    <h3>📊 Dashboard / Table / Last</h3>
-    <form method="post" id="my-form">
-        {% csrf_token %}
-        {{ form }}
-    </form>
-</div>
+<div class="dashboard-wrapper">
+    
+    <div class="top-bar">
+        <div class="title-section">
+            <h2>IoT Monitoring</h2>
+            <p>Live data from DHT11 Sensor</p>
+        </div>
+        <form method="post" id="my-form">
+            {% csrf_token %}
+            {{ form }}
+        </form>
+    </div>
 
-<div class="projects">
-    <div class="tables">
-        <table>
-            <thead>
-                <tr>
-                    <th>Capteur <img id="Capteur-logo" src="{% static 'images/dht11.jpg' %}"></th>
-                    <th>Température <img id="Temperature-logo" src="{% static 'images/temp.jpg' %}"></th>
-                    <th>Humidité <img id="Humidity-logo" src="{% static 'images/humidity.jpg' %}"></th>
-                    <th>Date <img id="Humidity-logo" src="{% static 'images/time.jpg' %}"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><a href="{% url 'myChartTemp' %}">DHT11</a></td>
-                    <td>{{ valeurs.temp }} °C</td>
-                    <td>{{ valeurs.hum }} %</td>
-                    <td>{{ valeurs.date }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="metrics-grid">
+        
+        <div class="metric-card card-temp">
+            <div class="metric-info">
+                <h4>Temperature</h4>
+                <h1>{{ valeurs.temp }}°C</h1>
+            </div>
+            <div class="icon-box">
+                <i class="fa-solid fa-temperature-three-quarters"></i>
+            </div>
+            <div class="progress-bg">
+                <div class="progress-fill" style="width: {{ valeurs.temp }}%; background: var(--grad-temp);"></div>
+            </div>
+        </div>
 
-        <p>
-            Ce tableau affiche les dernières mesures de température et d'humidité collectées par le capteur DHT11.
-            Il permet une surveillance rapide et fiable des conditions environnementales en temps réel.
+        <div class="metric-card card-hum">
+            <div class="metric-info">
+                <h4>Humidity</h4>
+                <h1>{{ valeurs.hum }}%</h1>
+            </div>
+            <div class="icon-box">
+                <i class="fa-solid fa-droplet"></i>
+            </div>
+            <div class="progress-bg">
+                <div class="progress-fill" style="width: {{ valeurs.hum }}%; background: var(--grad-hum);"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="data-panel">
+        <div class="panel-header">
+            <h3>Recent Log</h3>
+            <button id="csv" class="btn-download">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Export CSV
+            </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Device Name</th>
+                        <th>Status Reading</th>
+                        <th>Recorded Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>DHT11 Sensor</strong><br>
+                            <span style="font-size:0.8em; color:#94a3b8;">ID: #001</span>
+                        </td>
+                        <td>
+                           <span class="readout-pill pill-temp"><i class="fa-solid fa-temperature-half"></i> {{ valeurs.temp }}°C</span>
+                           <span class="readout-pill pill-hum" style="margin-left:5px;"><i class="fa-solid fa-droplet"></i> {{ valeurs.hum }}%</span>
+                        </td>
+                        <td>
+                            <i class="fa-regular fa-clock" style="margin-right:5px; color:#94a3b8;"></i>
+                            {{ valeurs.date }}
+                        </td>
+                        <td>
+                            <a href="{% url 'myChartTemp' %}" style="color: var(--text-dark); text-decoration:none; font-weight:600;">
+                                <i class="fa-solid fa-chart-line"></i> Analytics
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p style="margin-top: 1.5rem; font-size: 0.85rem; color: #94a3b8; text-align: center;">
+            System refreshes automatically every 10 seconds.
         </p>
-
-        <button id="csv">⬇ Télécharger CSV</button>
     </div>
 </div>
 
 <script>
-$('#mon_select').change(function() {
-    $('#my-form').submit();
-});
+    $('#mon_select').change(function() {
+        $('#my-form').submit();
+    });
 
-document.getElementById('csv').addEventListener('click', function() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/download_csv/', true);
-    xhr.responseType = 'blob';
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            var url = window.URL.createObjectURL(xhr.response);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'model_values.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    };
-    xhr.send();
-});
+    document.getElementById('csv').addEventListener('click', function() {
+        // Animation feedback for button
+        const btn = this;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/download_csv/', true);
+        xhr.responseType = 'blob';
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var url = window.URL.createObjectURL(xhr.response);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'model_values.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            // Reset text
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> Export CSV';
+            }, 500);
+        };
+        xhr.send();
+    });
 
-// Auto refresh every 10s (change if needed)
-setInterval(() => location.reload(), 10000);
+    setInterval(() => location.reload(), 10000);
 </script>
 
 {% endblock i %}

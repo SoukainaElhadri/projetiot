@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails de l'incident #{{ incident.id }}</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f6f9; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .details { margin-bottom: 30px; }
+        .details p { margin: 10px 0; font-size: 1.1em; }
+        .label { font-weight: bold; width: 150px; display: inline-block; color: #555; }
+        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; }
+        .resolved { background-color: #d4edda; color: #155724; }
+        .unresolved { background-color: #f8d7da; color: #721c24; }
+        
+        .actions { margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 6px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        .btn-ack { background-color: #007bff; color: white; }
+        .btn-ack[disabled] { background-color: #ccc; cursor: not-allowed; }
+        
+        .comments-section { margin-top: 40px; }
+        .comment { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .comment-meta { font-size: 0.85em; color: #777; margin-bottom: 5px; }
+        .comment-text { font-size: 1em; line-height: 1.5; }
+        
+        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px; min-height: 100px; }
+        .btn-submit { background-color: #28a745; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Incident #{{ incident.id }}</h1>
+        
+        <div class="details">
+            <p><span class="label">Description:</span> {{ incident.description }}</p>
+            <p><span class="label">Date:</span> {{ incident.timestamp }}</p>
+            <p><span class="label">Température:</span> {{ incident.dht_reading.temp }}°C</p>
+            <p><span class="label">Statut:</span> 
+                {% if incident.resolved %}
+                    <span class="status-badge resolved">Résolu</span>
+                {% else %}
+                    <span class="status-badge unresolved">Non résolu</span>
+                {% endif %}
+            </p>
+            <p><span class="label">Niveau d'alerte:</span> {{ incident.escalation_level }}</p>
+            
+            {% if incident.acknowledged_by %}
+                <p><span class="label">Vu par:</span> {{ incident.acknowledged_by.username }} le {{ incident.acknowledged_at }}</p>
+            {% else %}
+                <p><span class="label">Vu par:</span> <span style="color:red">Non vu</span></p>
+            {% endif %}
+        </div>
+
+        <div class="actions">
+            {% if not incident.acknowledged_by %}
+                <form method="post">
+                    {% csrf_token %}
+                    <p>En cliquant ci-dessous, vous confirmez avoir vu cet incident.</p>
+                    <button type="submit" name="acknowledge" class="btn btn-ack">Confirmer la lecture</button>
+                </form>
+            {% else %}
+                <p>✅ Cet incident a été pris en compte par <strong>{{ incident.acknowledged_by.username }}</strong>.</p>
+            {% endif %}
+        </div>
+
+        <div class="comments-section">
+            <h2>Commentaires</h2>
+            {% for comment in incident.comments.all %}
+                <div class="comment">
+                    <div class="comment-meta">{{ comment.user.username }} - {{ comment.created_at }}</div>
+                    <div class="comment-text">{{ comment.text }}</div>
+                </div>
+            {% empty %}
+                <p>Aucun commentaire pour le moment.</p>
+            {% endfor %}
+            
+            <h3 style="margin-top: 30px;">Laisser un commentaire</h3>
+            <form method="post">
+                {% csrf_token %}
+                <textarea name="text" placeholder="Écrivez votre commentaire ici..." required></textarea>
+                <button type="submit" name="comment" class="btn btn-submit">Envoyer</button>
+            </form>
+        </div>
+        
+        <p style="margin-top: 20px;"><a href="{% url 'incident_list' %}">&larr; Retour à la liste</a></p>
+    </div>
+</body>
+</html>

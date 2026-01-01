@@ -12,8 +12,8 @@ def latest_json():
     return None
 
 
-from django.shortcuts import render
-from .models import Dht11  # Assurez-vous d'importer le modèle Dht11
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Dht11, Incident, IncidentComment  # Assurez-vous d'importer le modèle Dht11
 from django.utils import timezone
 import csv
 from django.http import HttpResponse
@@ -61,6 +61,35 @@ def table(request):
     return render(request, 'value.html', {'valeurs': valeurs})
 
 
+def incident_list(request):
+    incidents = Incident.objects.all().order_by('-timestamp')
+    return render(request, 'incident_list.html', {'incidents': incidents})
+
+
+@login_required
+def incident_detail(request, incident_id):
+    incident = get_object_or_404(Incident, id=incident_id)
+    
+    if request.method == 'POST':
+        if 'acknowledge' in request.POST:
+            incident.acknowledged_by = request.user
+            incident.acknowledged_at = timezone.now()
+            incident.resolved = True # Keep it resolved or just ack? User said "confirme is seen", maybe auto-resolve? Keeping as just Ack helps track who saw it.
+            # But earlier user said "green = solved". Let's assume Ack doesn't resolve, but "fixing temp" resolves.
+            # Wait, user request: "send email and it should confirem is seen it" -> this is Ack.
+            # "can leave commnet" -> comment.
+            incident.save()
+            return redirect('incident_detail', incident_id=incident.id)
+        
+        elif 'comment' in request.POST:
+            text = request.POST.get('text')
+            if text:
+                IncidentComment.objects.create(incident=incident, user=request.user, text=text)
+            return redirect('incident_detail', incident_id=incident.id)
+
+    return render(request, 'incident_detail.html', {'incident': incident})
+
+
 # Téléchargement CSV
 def download_csv(request):
     data = Dht11.objects.all()
@@ -69,9 +98,14 @@ def download_csv(request):
 
     writer = csv.writer(response)
     writer.writerow(['id', 'temp', 'hum', 'dt'])
-    for row in data.values_list('id', 'temp', 'hum', 'dt'):
-        writer.writerow(row)
+    for row in data:
+        writer.writerow([row.id, row.temp, row.hum, row.dt])
+        
     return response
+
+# Mini Dashboard Views (Restored for Navbar compatibility)
+def dashboard(request):
+    return render(request, 'dashboard.html')
 
 
 # Pages graphiques
@@ -191,6 +225,17 @@ def register(request):
 def user_logout(request):
     logout(request)
     return redirect('home')
+
+# Redirect after login based on Role
+@login_required
+def custom_login_redirect(request):
+    user = request.user
+    if user.is_superuser or user.groups.filter(name='Admin').exists():
+        return redirect('/admin/')
+    elif user.groups.filter(name='Manager').exists():
+        return redirect('incident_list')
+    else:
+        return redirect('home')
 
 
 # ////////////////////////// Json

@@ -27,6 +27,12 @@ urlpatterns = [
     path('json-data/', views.json_data_view, name='json_data'),
     path('api/sensors/all/', views.api_sensors_all, name='api_all'),
     path('api/sensors/latest/', views.api_sensors_latest, name='api_latest'),
+    path('incidents/', views.incident_list, name='incident_list'),
+    path('incidents/<int:incident_id>/', views.incident_detail, name='incident_detail'),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('redirect/', views.custom_login_redirect, name='custom_login_redirect'),
+    path('logout/', views.user_logout, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
 
 
 ]
