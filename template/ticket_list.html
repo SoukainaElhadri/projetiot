@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Tickets - ThermoGuard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-secondary fw-bold">Ticket Management</h2>
+    <div>
+        <span class="badge bg-secondary">Total: {{ tickets.count }}</span>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">ID</th>
+                    <th>Subject</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Last Update</th>
+                    <th class="text-end pe-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td class="ps-4 fw-bold">#{{ ticket.id }}</td>
+                    <td>
+                        <div class="fw-bold text-dark">{{ ticket.title }}</div>
+                        <small class="text-muted">{{ ticket.description|truncatechars:50 }}</small>
+                    </td>
+                    <td>
+                        {% if ticket.priority == 'CRITICAL' %}
+                        <span class="badge bg-danger">Critical</span>
+                        {% elif ticket.priority == 'HIGH' %}
+                        <span class="badge bg-warning text-dark">High</span>
+                        {% else %}
+                        <span class="badge bg-info text-dark">{{ ticket.priority }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ticket.status == 'OPEN' %}
+                        <span class="badge bg-success">Open</span>
+                        {% elif ticket.status == 'CLOSED' %}
+                        <span class="badge bg-secondary">Closed</span>
+                        {% else %}
+                        <span class="badge bg-primary">{{ ticket.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ticket.assigned_to %}
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-user-circle text-muted"></i> {{ ticket.assigned_to.username }}
+                        </div>
+                        {% else %}
+                        <span class="text-muted fst-italic">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted small">{{ ticket.updated_at|timesince }} ago</td>
+                    <td class="text-end pe-4">
+                        <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-primary">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">No tickets found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

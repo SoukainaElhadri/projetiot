@@ -14,7 +14,7 @@ def send_email_alert(incident):
     subject = f"Incident Alert: {incident.description}"
     message = f"An incident occurred at {incident.timestamp}.\n\nTemperature: {incident.dht_reading.temp}°C\nDescription: {incident.description}\n\nPlease acknowledge this incident immediately."
     # recipient_list = [settings.EMAIL_HOST_USER]
-    recipient_list = ["ayo11ub10@gmail.com"]
+    recipient_list = ["sou.elhadri@gmail.com"]
     
     try:
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list)

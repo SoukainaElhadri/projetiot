@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Ticket #{{ ticket.id }} - ThermoGuard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="{% url 'ticket_list' %}" class="text-decoration-none text-muted mb-3 d-inline-block">
+            <i class="fas fa-arrow-left me-2"></i>Back to Tickets
+        </a>
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h2 class="fw-bold mb-1">Ticket #{{ ticket.id }}: {{ ticket.title }}</h2>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-dark">{{ ticket.priority }}</span>
+                    <span class="badge {% if ticket.status == 'CLOSED' %}bg-secondary{% else %}bg-primary{% endif %}">{{
+                        ticket.status }}</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                {% if ticket.status != 'CLOSED' %}
+                {% if not ticket.assigned_to %}
+                <form method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="take">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-hand-paper me-2"></i>Assign to
+                        Me</button>
+                </form>
+                {% endif %}
+
+                <form method="POST" class="ms-2" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="close">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-check me-2"></i>Close Ticket</button>
+                </form>
+                {% else %}
+                <button class="btn btn-secondary" disabled>Ticket Closed</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-white fw-bold">Description</div>
+            <div class="card-body">
+                <p class="mb-0">{{ ticket.description|linebreaks }}</p>
+            </div>
+        </div>
+
+        {% if ticket.incident %}
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">Linked Incident</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Incident ID:</strong> #{{ ticket.incident.id }}</p>
+                <p class="mb-1"><strong>Time:</strong> {{ ticket.incident.timestamp }}</p>
+                <p class="mb-0"><strong>Reading:</strong> {{ ticket.incident.dht_reading.temp }}°C / {{
+                    ticket.incident.dht_reading.hum }}%</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white fw-bold">Details</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted">Created</span>
+                    <span>{{ ticket.created_at|date:"M d, H:i" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted">Updated</span>
+                    <span>{{ ticket.updated_at|timesince }} ago</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted">Assigned To</span>
+                    <span class="fw-bold">{{ ticket.assigned_to.username|default:"--" }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

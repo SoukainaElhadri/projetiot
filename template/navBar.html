@@ -1,286 +1,56 @@
-    <style>
-        /* --- Reset & Base Styles --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    /* Use the imported Google Font */
-    font-family: 'Poppins', sans-serif;
-    background-color: #f4f7f6; /* Light gray body background for contrast */
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-ul {
-    list-style: none;
-}
-
-/* --- Main Header & Navbar Container --- */
-.header {
-    /* A deep, tech-blue background */
-    background: linear-gradient(to right, #141e30, #243b55);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    max-width: 1400px; /* Keep content from getting too wide on huge screens */
-    margin: 0 auto;
-}
-
-/* --- Navbar Brand (Logo) --- */
-.navbar-brand {
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #00ddd3; /* Bright Cyan accent color */
-    letter-spacing: 0.5px;
-}
-
-.navbar-brand i {
-    font-size: 1.8rem;
-}
-
-/* --- Navbar Links --- */
-.navbar-links ul {
-    display: flex;
-    gap: 2rem; /* Spacing between links */
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.8); /* Slightly muted white */
-    padding: 0.5rem 0;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.nav-link i {
-    font-size: 1.1rem;
-}
-
-/* Hover Effect for Links - The "Underline Slide" */
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: #00ddd3;
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover {
-    color: #ffffff;
-}
-
-.nav-link:hover::after {
-    width: 100%;
-}
-
-/* --- Navbar Actions (Dropdown) --- */
-.navbar-actions {
-    display: flex;
-    align-items: center;
-}
-
-.dropdown {
-    position: relative;
-}
-
-/* Styling the main button */
-.dropdown-btn {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    font-family: inherit;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0.6rem 1.2rem;
-    border-radius: 30px; /* Pill shape */
-    transition: all 0.3s ease;
-}
-
-.dropdown-btn i {
-    font-size: 1.2rem;
-    color: #00ddd3;
-}
-
-.dropdown-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: #00ddd3;
-}
-
-/* The Dropdown Menu Content */
-/* --- Fix for the Dropdown --- */
-
-/* 1. Position the menu directly below */
-.dropdown-content {
-    opacity: 0;
-    visibility: hidden;
-    
-    position: absolute;
-    right: 0;
-    top: 100%;           /* Align directly to the bottom of the button */
-    margin-top: 10px;    /* Use margin for the visual space instead of top% */
-    
-    background-color: #ffffff;
-    min-width: 200px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    overflow: visible;   /* IMPORTANT: Must be visible so the bridge works */
-    z-index: 1001;
-    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    transform: translateY(10px);
-}
-
-/* 2. THE INVISIBLE BRIDGE (This fixes your problem) */
-/* This creates an invisible block that fills the gap between the button and menu */
-.dropdown-content::before {
-    content: "";
-    position: absolute;
-    top: -20px;          /* Extend upwards to touch the button */
-    left: 0;
-    width: 100%;
-    height: 20px;        /* Height of the gap */
-    background: transparent; /* It is invisible */
-}
-
-/* 3. The Hover State */
-.dropdown:hover .dropdown-content {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-/* Show Dropdown on Hover */
-/* .dropdown:hover .dropdown-content {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-} */
-
-.dropdown-content a {
-    color: #2c3e50;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background 0.2s;
-}
-
-.dropdown-content a i {
-    color: #6c757d;
-    width: 20px; /* Ensure icons align neatly */
-    text-align: center;
-    transition: color 0.2s;
-}
-
-.dropdown-content a:hover {
-    background-color: #f0f2f5;
-    color: #00ddd3;
-}
-
-.dropdown-content a:hover i {
-    color: #00ddd3;
-}
-
-/* --- Mobile Toggle Icon --- */
-.navbar-toggle {
-    display: none; /* Hidden on desktop */
-    font-size: 1.5rem;
-    color: white;
-    cursor: pointer;
-}
-
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 960px) {
-    .navbar-links,
-    .navbar-actions {
-        /* For this pure CSS example, we hide them on mobile.
-           To make a functional mobile menu requires JavaScript. */
-        display: none;
-    }
-
-    .navbar-toggle {
-        display: block;
-    }
-}
-    </style>
-    <header class="header">
-        <nav class="navbar">
-            <div class="navbar-brand">
-                
-
-<i class='fa-solid fa-temperature-quarter' style='color: white'></i>               
- <a href="{% url 'home' %}">ThermoGuard</a>
-
-            </div>
-
-            <div class="navbar-links">
-                <ul>
-                    <li><a href="{% url 'table' %}" class="nav-link"><i class="fas fa-table"></i> Tableau de données</a></li>
-                    <li><a href="{% url 'myChartTemp' %}" class="nav-link"><i class="fas fa-temperature-high"></i> Température</a></li>
-                    <li><a href="{% url 'myChartHum' %}" class="nav-link"><i class="fas fa-tint"></i> Humidité</a></li>
-                    <li><a href="{% url 'api_list' %}" class="nav-link"><i class="fas fa-code"></i> API JSON</a></li>
-                    <li><a href="{% url 'incident_list' %}"class="nav-link">    <i class='fa fa-warning' style='color: white'></i>
- incidents</a></li>
-                </ul>
-            </div>
-
-            <div class="navbar-actions">
-    <div class="dropdown">
-        
-        <button class="dropdown-btn">
-            {% if user.is_authenticated %}
-                <i class="fas fa-user-check"></i> {{ user.username }}
-            {% else %}
-                <i class="fas fa-user-circle"></i> Compte
-            {% endif %}
-            <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'table' %}">
+            <i class="fas fa-snowflake me-2"></i>Cold Chain Monitor
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="dropdown-content">
+        <div class="collapse navbar-collapse" id="navbarNav">
             {% if user.is_authenticated %}
-             <li>
-                <a href="{% url 'incident_list' %}"><i class="fas fa-cog"></i> incidents</a>
-                <a href="{% url 'logout' %}" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Se déconnecter</a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'table' %}"><i class="fas fa-tachometer-alt me-1"></i>
+                        Dashboard</a>
                 </li>
-            {% else %}
-                <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Se connecter</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'charts_hub' %}"><i class="fas fa-chart-line me-1"></i> Charts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ticket_list' %}"><i class="fas fa-ticket-alt me-1"></i>
+                        Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reports_view' %}"><i class="fas fa-file-alt me-1"></i> Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'incident_list' %}"><i
+                            class="fas fa-exclamation-triangle me-1"></i> Alerts</a>
+                </li>
+                {% if user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'audit_log_view' %}"><i class="fas fa-shield-alt me-1"></i>
+                        Audit</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin"><i class="fas fa-cog me-1"></i> Admin</a>
+                </li>
                 {% endif %}
+            </ul>
+            <div class="d-flex align-items-center">
+                <span class="navbar-text text-white me-3">
+                    <i class="fas fa-user-circle"></i> {{ user.username }}
+                </span>
+                <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light">Logout</a>
+            </div>
+            {% else %}
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+            {% endif %}
         </div>
     </div>
-</div>
-            </div>
-
-            <div class="navbar-toggle">
-                <i class="fas fa-bars"></i>
-            </div>
-        </nav>
-    </header>
+</nav>

@@ -1,334 +1,173 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Données - ThermoGuard{% endblock %}
+
 {% block content %}
-<style>
-/* ===== Global ===== */
-body {
-    background: #f4f6f9;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-}
-
-.data-dashboard {
-    max-width: 1300px;
-    margin: auto;
-    padding: 25px;
-}
-
-/* ===== Header ===== */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.header-title h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.subtitle {
-    color: #6b7280;
-    font-size: 14px;
-}
-
-/* ===== Actions ===== */
-.action-group {
-    display: flex;
-    gap: 12px;
-}
-
-.search-container {
-    position: relative;
-}
-
-.search-container i {
-    position: absolute;
-    top: 50%;
-    left: 12px;
-    transform: translateY(-50%);
-    color: #9ca3af;
-}
-
-.search-input {
-    padding: 10px 12px 10px 35px;
-    border-radius: 10px;
-    border: 1px solid #e5e7eb;
-    outline: none;
-}
-
-.action-btn {
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.export-btn {
-    background: #10b981;
-    color: #fff;
-}
-
-.refresh-btn {
-    background: #3b82f6;
-    color: #fff;
-}
-
-.action-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-/* ===== Summary Cards ===== */
-.data-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.summary-card {
-    background: #fff;
-    border-radius: 18px;
-    padding: 22px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-}
-
-.card-icon {
-    font-size: 32px;
-    padding: 18px;
-    border-radius: 14px;
-    margin-right: 18px;
-    color: #fff;
-}
-
-.temp-card .card-icon { background: linear-gradient(135deg,#f97316,#fb923c); }
-.hum-card .card-icon { background: linear-gradient(135deg,#06b6d4,#22d3ee); }
-.update-card .card-icon { background: linear-gradient(135deg,#8b5cf6,#a78bfa); }
-
-.card-content h3 {
-    font-size: 14px;
-    color: #6b7280;
-    margin-bottom: 5px;
-}
-
-.card-content .value {
-    font-size: 26px;
-    font-weight: 700;
-    color: #111827;
-}
-
-.card-content span {
-    font-size: 14px;
-    color: #6b7280;
-}
-
-/* ===== Table ===== */
-.table-container {
-    background: #fff;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.data-table thead {
-    background: #f9fafb;
-}
-
-.data-table th {
-    padding: 14px;
-    font-size: 13px;
-    text-transform: uppercase;
-    color: #6b7280;
-    cursor: pointer;
-}
-
-.data-table td {
-    padding: 14px;
-    border-top: 1px solid #e5e7eb;
-    font-size: 14px;
-}
-
-.data-table tbody tr:hover {
-    background: #f3f4f6;
-}
-
-/* ===== Pagination ===== */
-.pagination-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 25px;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.pagination-info {
-    font-size: 14px;
-    color: #6b7280;
-}
-
-.pagination-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.pagination-btn,
-.page-link,
-.current-page {
-    padding: 8px 12px;
-    border-radius: 8px;
-    background: #e5e7eb;
-    text-decoration: none;
-    color: #111827;
-    font-weight: 600;
-}
-
-.current-page {
-    background: #3b82f6;
-    color: #fff;
-}
-
-.pagination-btn:hover,
-.page-link:hover {
-    background: #d1d5db;
-}
-
-/* ===== Page size ===== */
-.page-size-select {
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-</style>
-
-<div class="data-dashboard">
-    <div class="dashboard-header">
-        <div class="header-title">
-            <h1><i class="fas fa-table"></i> Données du Capteur DHT11</h1>
-            <p class="subtitle">Surveillance des conditions environnementales</p>
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h1 class="h2 fw-bold text-secondary mb-1">
+                <i class="fas fa-database text-primary me-2"></i> Données Capteur
+            </h1>
+            <p class="text-muted mb-0">Historique des relevés environnementaux</p>
         </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-modern-primary" id="refreshData">
+                <i class="fas fa-sync-alt"></i> Actualiser
+            </button>
+            <button class="btn btn-success text-white fw-bold shadow-sm" id="exportCSV">
+                <i class="fas fa-file-download me-2"></i> CSV
+            </button>
+        </div>
+    </div>
 
-        <div class="header-actions">
-            <div class="action-group">
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="dataSearch" placeholder="Rechercher..." class="search-input">
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Temp Card -->
+        <div class="col-md-4">
+            <div class="card-modern border-0 h-100 position-relative overflow-hidden">
+                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                    <i class="fas fa-temperature-high fa-4x text-danger"></i>
                 </div>
-                <button class="action-btn export-btn" id="exportCSV">
-                    <i class="fas fa-file-csv"></i> Exporter CSV
-                </button>
-                <button class="action-btn refresh-btn" id="refreshData">
-                    <i class="fas fa-sync-alt"></i> Actualiser
-                </button>
+                <h6 class="text-muted text-uppercase fw-bold font-size-sm mb-2">Température Actuelle</h6>
+                <div class="d-flex align-items-baseline">
+                    <h2 class="display-5 fw-bold text-dark mb-0 me-2">{{ latest.temp }}</h2>
+                    <span class="text-muted fs-5">°C</span>
+                </div>
+                <div class="mt-3">
+                    <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1">
+                        <i class="fas fa-fire me-1"></i> Live
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Humidity Card -->
+        <div class="col-md-4">
+            <div class="card-modern border-0 h-100 position-relative overflow-hidden">
+                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                    <i class="fas fa-tint fa-4x text-info"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold font-size-sm mb-2">Humidité Actuelle</h6>
+                <div class="d-flex align-items-baseline">
+                    <h2 class="display-5 fw-bold text-dark mb-0 me-2">{{ latest.hum }}</h2>
+                    <span class="text-muted fs-5">%</span>
+                </div>
+                <div class="mt-3">
+                    <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-2 py-1">
+                        <i class="fas fa-water me-1"></i> Live
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last Update Card -->
+        <div class="col-md-4">
+            <div class="card-modern border-0 h-100 position-relative overflow-hidden">
+                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                    <i class="fas fa-clock fa-4x text-primary"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold font-size-sm mb-2">Dernière Mise à Jour</h6>
+                <div class="d-flex align-items-baseline">
+                    <h2 class="display-6 fw-bold text-dark mb-0">{{ latest.timestamp|date:"H:i" }}</h2>
+                </div>
+                <div class="mt-3 text-muted small">
+                    <i class="fas fa-calendar-alt me-1"></i> {{ latest.timestamp|date:"d M Y" }}
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="data-summary">
-        <div class="summary-card temp-card">
-            <div class="card-icon">
-                <i class="fas fa-temperature-high"></i>
-            </div>
-            <div class="card-content">
-                <h3>Température Actuelle</h3>
-                <p class="value">{{ latest.temp }} <span>°C</span></p>
-            </div>
-        </div>
-
-        <div class="summary-card hum-card">
-            <div class="card-icon">
-                <i class="fas fa-tint"></i>
-            </div>
-            <div class="card-content">
-                <h3>Humidité Actuelle</h3>
-                <p class="value">{{ latest.hum }} <span>%</span></p>
+    <!-- Data Table -->
+    <div class="card-modern border-0">
+        <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+            <h5 class="fw-bold mb-0">Relevés Détaillés</h5>
+            <div class="input-group" style="max-width: 250px;">
+                <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" id="dataSearch" class="form-control bg-light border-start-0"
+                    placeholder="Rechercher...">
             </div>
         </div>
 
-        <div class="summary-card update-card">
-            <div class="card-icon">
-                <i class="fas fa-clock"></i>
-            </div>
-            <div class="card-content">
-                <h3>Dernière Mise à Jour</h3>
-                <p class="value">{{ latest.timestamp|date:"H:i" }} <span>{{ latest.timestamp|date:"d/m/Y" }}</span></p>
-            </div>
+        <div class="table-responsive">
+            <table class="table table-modern align-middle" id="sensorDataTable">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 text-muted small text-uppercase fw-bold border-0">ID</th>
+                        <th class="text-muted small text-uppercase fw-bold border-0">Température</th>
+                        <th class="text-muted small text-uppercase fw-bold border-0">Humidité</th>
+                        <th class="pe-4 text-muted small text-uppercase fw-bold border-0">Horodatage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in data %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-secondary">#{{ record.id }}</td>
+                        <td>
+                            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">
+                                {{ record.temp }} °C
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill">
+                                {{ record.hum }} %
+                            </span>
+                        </td>
+                        <td class="pe-4 text-muted">{{ record.timestamp|date:"d/m/Y H:i:s" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+                            <p>Aucune donnée disponible.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <div class="table-container">
-        <table id="sensorDataTable" class="data-table">
-            <thead>
-                <tr>
-                    <th data-sort="id">ID <i class="fas fa-sort"></i></th>
-                    <th data-sort="temp">Température (°C) <i class="fas fa-sort"></i></th>
-                    <th data-sort="hum">Humidité (%) <i class="fas fa-sort"></i></th>
-                    <th data-sort="timestamp">Horodatage <i class="fas fa-sort"></i></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for record in data %}
-                <tr>
-                    <td>{{ record.id }}</td>
-                    <td>{{ record.temp }}</td>
-                    <td>{{ record.hum }}</td>
-                    <td>{{ record.timestamp|date:"d/m/Y H:i:s" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        <!-- Pagination -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 px-2">
+            <div class="text-muted small mb-2 mb-md-0">
+                Affichage de <span class="fw-bold">{{ data.start_index }}</span> à <span class="fw-bold">{{
+                    data.end_index }}</span> sur <span class="fw-bold">{{ data.paginator.count }}</span> entrées
+            </div>
 
-    <div class="pagination-container">
-        <div class="pagination-info">
-            Affichage de {{ data.start_index }} à {{ data.end_index }} sur {{ data.paginator.count }} entrées
-        </div>
-
-        <div class="pagination-controls">
-            {% if data.has_previous %}
-                <a href="?page=1" class="pagination-btn first-page"><i class="fas fa-angle-double-left"></i></a>
-                <a href="?page={{ data.previous_page_number }}" class="pagination-btn prev-page"><i class="fas fa-angle-left"></i></a>
-            {% endif %}
-
-            <div class="page-numbers">
-                {% for num in data.paginator.page_range %}
-                    {% if data.number == num %}
-                        <span class="current-page">{{ num }}</span>
-                    {% elif num > data.number|add:'-3' and num < data.number|add:'3' %}
-                        <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    {% if data.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link border-0 rounded-start-pill px-3" href="?page=1">&laquo;</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link border-0 px-3" href="?page={{ data.previous_page_number }}">&lsaquo;</a>
+                    </li>
                     {% endif %}
-                {% endfor %}
-            </div>
 
-            {% if data.has_next %}
-                <a href="?page={{ data.next_page_number }}" class="pagination-btn next-page"><i class="fas fa-angle-right"></i></a>
-                <a href="?page={{ data.paginator.num_pages }}" class="pagination-btn last-page"><i class="fas fa-angle-double-right"></i></a>
-            {% endif %}
-        </div>
+                    {% for num in data.paginator.page_range %}
+                    {% if data.number == num %}
+                    <li class="page-item active"><span class="page-link border-0 bg-primary shadow-sm">{{ num }}</span>
+                    </li>
+                    {% elif num > data.number|add:'-3' and num < data.number|add:'3' %} <li class="page-item"><a
+                            class="page-link border-0 text-secondary" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
 
-        <div class="page-size-selector">
-            <label for="pageSize">Afficher :</label>
-            <select id="pageSize" class="page-size-select">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
+                        {% if data.has_next %}
+                        <li class="page-item">
+                            <a class="page-link border-0 px-3" href="?page={{ data.next_page_number }}">&rsaquo;</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link border-0 rounded-end-pill px-3"
+                                href="?page={{ data.paginator.num_pages }}">&raquo;</a>
+                        </li>
+                        {% endif %}
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
-
 {% endblock %}

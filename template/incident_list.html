@@ -1,159 +1,68 @@
 {% extends 'base.html' %}
 
-{% block title %}Suivi des Incidents{% endblock %}
+{% block title %}Incidents - Cold Chain Monitor{% endblock %}
 
-{% block i %}
-    <style>
-      :root {
-        --primary-color: #4a90e2;
-        --border-color: #e0e0e0;
-        --table-header-bg: #f8f9fa;
-      }
-      .incident-wrapper {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        padding-top: 20px;
-      }
-      .table-container {
-        background: white;
-        width: 100%;
-        max-width: 1000px;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-        padding-bottom: 20px;
-      }
-      .table-header {
-        padding: 25px 30px;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .table-header h1 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: 600;
-        color: #2c3e50;
-        font-family: 'Poppins', sans-serif;
-      }
-      .badge-count {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: bold;
-      }
-      .incident-table {
-        width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-      }
-      .incident-table th {
-        background-color: var(--table-header-bg);
-        color: #666;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 12px;
-        letter-spacing: 0.5px;
-        padding: 16px 30px;
-        text-align: left;
-        border-bottom: 1px solid var(--border-color);
-      }
-      .incident-table td {
-        padding: 16px 30px;
-        border-bottom: 1px solid var(--border-color);
-        font-size: 14px;
-        color: #444;
-      }
-      .col-temp {
-        font-family: 'Consolas', 'Monaco', monospace;
-        font-weight: bold;
-        color: #e67e22;
-      }
-      .status-pill {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        background-color: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(0,0,0, 0.1);
-      }
-      .resolved { background-color: #d4edda; }
-      .unresolved { background-color: #f8d7da; }
-      tr.resolved:hover { background-color: #c3e6cb; }
-      tr.unresolved:hover { background-color: #f5c6cb; }
-      .empty-state {
-        text-align: center;
-        padding: 40px;
-        color: #888;
-        font-style: italic;
-      }
-      .detail-link {
-          text-decoration: none; 
-          color: #4a90e2; 
-          font-weight: bold;
-          transition: color 0.2s;
-      }
-      .detail-link:hover { color: #2c5f96; text-decoration: underline; }
-      
-      @keyframes blink {
-        0% { opacity: 1; }
-        50% { opacity: 0.4; }
-        100% { opacity: 1; }
-      }
-    </style>
-  
-    <div class="incident-wrapper">
-        <div class="table-container">
-            <div class="table-header">
-                <h1>Suivi des Incidents</h1>
-                <span class="badge-count">{{ incidents|length }} Événements</span>
-            </div>
-          
-            <table class="incident-table">
-                <thead>
-                    <tr>
-                        <th width="20%">Horodatage</th>
-                        <th width="45%">Description</th>
-                        <th width="15%">Temp. (°C)</th>
-                        <th width="15%">Statut</th>
-                        <th width="10%">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for incident in incidents %}
-                    <tr class="{% if incident.resolved %}resolved{% else %}unresolved{% endif %}">
-                        <td>{{ incident.timestamp|date:"d M Y H:i" }}</td>
-                        <td>{{ incident.description }}</td>
-                        <td class="col-temp">{{ incident.dht_reading.temp }}°C</td>
-                        <td>
-                            <span class="status-pill">
-                                {% if incident.resolved %}
-                                    Résolu
-                                {% else %}
-                                    {% if incident.timestamp < critical_threshold %}
-                                        <span style="color: #c0392b; font-weight: bold; animation: blink 1s infinite;">⚠ CRITIQUE</span>
-                                    {% else %}
-                                        Non résolu
-                                    {% endif %}
-                                {% endif %}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{% url 'incident_detail' incident.id %}" class="detail-link">Détails &rarr;</a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="empty-state">Aucun incident enregistré dans le système.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="text-secondary fw-bold">Incident Tickets</h2>
+  <div>
+    <span class="badge bg-danger">Critical: {{ incidents.count }}</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0">
+        <thead>
+          <tr>
+            <th class="ps-4">Ticket ID</th>
+            <th>Timestamp</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Resolution</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for incident in incidents %}
+          <tr>
+            <td class="ps-4 fw-bold">#{{ incident.id }}</td>
+            <td>{{ incident.timestamp|date:"Y-m-d H:i" }}</td>
+            <td>
+              <span class="badge bg-danger">{{ incident.type }}</span>
+            </td>
+            <td>
+              {% if incident.resolved %}
+              <span class="badge bg-success">Resolved</span>
+              {% else %}
+              <span class="badge bg-warning text-dark">Open</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if incident.resolved %}
+              <small class="text-muted">Auto-resolved</small>
+              {% else %}
+              --
+              {% endif %}
+            </td>
+            <td class="text-end pe-4">
+              <a href="{% url 'incident_detail' incident.id %}" class="btn btn-sm btn-outline-primary">
+                View Details
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-5 text-muted">
+              <i class="fas fa-check-circle fa-2x mb-3 text-success"></i>
+              <p>No incidents recorded.</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
+</div>
 {% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports & Exports - ThermoGuard{% endblock %}
+
+{% block content %}
+<h2 class="text-secondary fw-bold mb-4">Reports Center</h2>
+
+<div class="row g-4">
+    <!-- CSV Export Card -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header bg-white fw-bold">
+                <i class="fas fa-file-csv me-2 text-success"></i>Data Export (CSV)
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Download raw temperature and humidity data for compliance and analysis.</p>
+
+                <form action="{% url 'export_report_csv' %}" method="GET">
+                    <label class="form-label">Time Range</label>
+                    <select name="days" class="form-select mb-3">
+                        <option value="1">Last 24 Hours</option>
+                        <option value="7">Last 7 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last 3 Months</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-download me-2"></i>Download CSV
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Report Card (Placeholder) -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header bg-white fw-bold">
+                <i class="fas fa-file-pdf me-2 text-danger"></i>Compliance Report (PDF)
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Generate a formal compliance report including incident history and sensor
+                    calibration status.</p>
+                <div class="alert alert-info py-2 small">
+                    <i class="fas fa-info-circle me-1"></i> Coming soon in v2.1
+                </div>
+                <button class="btn btn-outline-danger w-100" disabled>
+                    Generate PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

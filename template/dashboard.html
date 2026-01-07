@@ -1,46 +1,152 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Dashboard - Cold Chain Monitor{% endblock %}
+
 {% block content %}
-<div class="dashboard-container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
-    <h1 style="text-align: center; margin-bottom: 30px;">IoT Dashboard</h1>
-    
-    <div class="cards-wrapper" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-        <!-- Temperature Card -->
-        <div class="card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); padding: 20px; border-radius: 15px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-            <div class="card-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                <i class="fas fa-thermometer-half" style="font-size: 24px; color: #d63384;"></i>
-                <h3 style="margin: 0; color: #333;">Température</h3>
-            </div>
-            <div class="card-body" style="text-align: center;">
-                <h2 id="temp-value" style="font-size: 48px; margin: 10px 0; color: #d63384;">-- °C</h2>
-                <p id="temp-time" style="color: #666; font-size: 14px;">En attente...</p>
-            </div>
-            <div class="card-footer" style="margin-top: 20px; text-align: center;">
-                <a href="{% url 'graph_temp' %}" class="btn" style="background: white; color: #d63384; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    Voir graphe température
-                </a>
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="text-secondary fw-bold">Live Dashboard</h2>
+        <span class="badge bg-success"><i class="fas fa-circle me-1"></i> System Online</span>
+    </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100 border-start border-4 border-primary">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted text-uppercase mb-2">Temperature</h6>
+                    <h1 class="display-4 fw-bold mb-0" id="temp-val">--</h1>
+                    <small class="text-muted">Target: 2°C - 8°C</small>
+                </div>
+                <div class="bg-light rounded-circle p-3 text-primary">
+                    <i class="fas fa-temperature-low fa-2x"></i>
+                </div>
             </div>
         </div>
-
-        <!-- Humidity Card -->
-        <div class="card" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); padding: 20px; border-radius: 15px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-            <div class="card-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                <i class="fas fa-tint" style="font-size: 24px; color: #6f42c1;"></i>
-                <h3 style="margin: 0; color: #333;">Humidité</h3>
-            </div>
-            <div class="card-body" style="text-align: center;">
-                <h2 id="hum-value" style="font-size: 48px; margin: 10px 0; color: #6f42c1;">-- %</h2>
-                <p id="hum-time" style="color: #666; font-size: 14px;">En attente...</p>
-            </div>
-            <div class="card-footer" style="margin-top: 20px; text-align: center;">
-                <a href="{% url 'graph_hum' %}" class="btn" style="background: white; color: #6f42c1; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    Voir graphe humidité
-                </a>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100 border-start border-4 border-info">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted text-uppercase mb-2">Humidity</h6>
+                    <h1 class="display-4 fw-bold mb-0" id="hum-val">--</h1>
+                    <small class="text-muted">Target: < 50%</small>
+                </div>
+                <div class="bg-light rounded-circle p-3 text-info">
+                    <i class="fas fa-tint fa-2x"></i>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<script src="{% static 'dashboard.js' %}"></script>
+<!-- Main Data Table -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center bg-white">
+        <span><i class="fas fa-table me-2"></i>Recent Measurements</span>
+        <button class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Timestamp</th>
+                        <th>Temperature</th>
+                        <th>Humidity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                    <tr>
+                        <td colspan="5" class="text-center py-4">Loading data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/api.js' %}"></script>
+<script>
+    let lastTimestamp = null;
+
+    async function refreshDashboard() {
+        const data = await fetchLatestData();
+
+        // Ensure data exists and is new (avoid duplicates)
+        if (data && data.dt !== lastTimestamp) {
+            lastTimestamp = data.dt; // Update tracker
+
+            // Update KPI Cards
+            document.getElementById('temp-val').innerText = data.temp + '°C';
+            document.getElementById('hum-val').innerText = data.hum + '%';
+
+            // Update Table
+            const tbody = document.getElementById('data-table-body');
+
+            // Format Date
+            const dateObj = new Date(data.dt);
+            const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
+
+            // Create Row HTML
+            const isAlert = data.temp > 8 || data.temp < 2;
+            const badgeClass = isAlert ? 'danger' : 'success';
+            const badgeText = isAlert ? 'Alert' : 'Normal';
+            const textClass = isAlert ? 'text-danger' : 'text-success';
+
+            const row = `
+                <tr class="fade-in-row">
+                    <td class="ps-4 fw-bold text-muted">#NEW</td>
+                    <td>${dateStr}</td>
+                    <td class="fw-bold ${textClass}">${data.temp}°C</td>
+                    <td>${data.hum}%</td>
+                    <td><span class="badge bg-${badgeClass} bg-opacity-10 text-${badgeClass} px-3 py-2 rounded-pill">
+                        ${badgeText}
+                    </span></td>
+                </tr>
+            `;
+
+            // Clear "Loading..." message if present
+            if (tbody.innerHTML.includes('Loading')) {
+                tbody.innerHTML = '';
+            }
+
+            // Insert new row at the top
+            tbody.insertAdjacentHTML('afterbegin', row);
+
+            // Keep only last 10 rows
+            if (tbody.children.length > 10) {
+                tbody.lastElementChild.remove();
+            }
+        }
+    }
+
+    // Add simple animation style
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .fade-in-row {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Initial load
+    refreshDashboard();
+    // Auto refresh every 2 seconds
+    setInterval(refreshDashboard, 2000);
+</script>
 {% endblock %}

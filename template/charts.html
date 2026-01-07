@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Charts - Cold Chain Monitor{% endblock %}
+
+{% block content %}
+<h2 class="text-secondary fw-bold mb-4">Environmental Trends</h2>
+
+<div class="row g-4">
+    <!-- Temperature Chart -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                Temperature History (°C)
+            </div>
+            <div class="card-body">
+                <canvas id="tempChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Humidity Chart -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                Humidity History (%)
+            </div>
+            <div class="card-body">
+                <canvas id="humChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    async function loadCharts() {
+        try {
+            const response = await fetch('/chart-data/'); // Existing endpoint returning {temps: [], temp: [], hum: []}
+            const data = await response.json();
+
+            // Temp Chart
+            new Chart(document.getElementById('tempChart'), {
+                type: 'line',
+                data: {
+                    labels: data.temps.map(t => new Date(t).toLocaleTimeString()), // Simplify labels
+                    datasets: [{
+                        label: 'Temperature',
+                        data: data.temp,
+                        borderColor: '#0d6efd',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Hum Chart
+            new Chart(document.getElementById('humChart'), {
+                type: 'line',
+                data: {
+                    labels: data.temps.map(t => new Date(t).toLocaleTimeString()),
+                    datasets: [{
+                        label: 'Humidity',
+                        data: data.hum,
+                        borderColor: '#0dcaf0',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+        } catch (e) {
+            console.error("Failed to load chart data", e);
+        }
+    }
+    loadCharts();
+</script>
+{% endblock %}

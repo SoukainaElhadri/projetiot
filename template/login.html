@@ -1,132 +1,41 @@
-{% extends 'authen.html' %}
+{% extends 'base.html' %}
 
-{% block title %}Se connecter{% endblock %}
-
-{% block header_title %}Bienvenue{% endblock %}
-{% block header_subtitle %}Entrez vos identifiants pour continuer{% endblock %}
-
-{% block extra_css %}
-<style>
-    /* Styling specifically for the login form elements */
-    .form-group {
-        margin-bottom: 15px;
-        position: relative;
-    }
-    
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #555;
-    }
-
-    /* Input styling */
-    .input-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    input[type="text"], input[type="password"] {
-        width: 100%;
-        padding: 10px 35px 10px 12px; /* Right padding for eye icon */
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 14px;
-        transition: border-color 0.3s;
-        outline: none;
-    }
-
-    input:focus {
-        border-color: #2575fc;
-        box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
-    }
-
-    /* Password Eye Icon */
-    .password-toggle {
-        position: absolute;
-        right: 12px;
-        color: #999;
-        cursor: pointer;
-        font-size: 14px;
-    }
-    .password-toggle:hover { color: #2575fc; }
-
-    /* Button */
-    .btn-submit {
-        width: 100%;
-        padding: 12px;
-        background: linear-gradient(to right, #6a11cb, #2575fc);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 10px;
-        transition: opacity 0.2s;
-    }
-    .btn-submit:hover { opacity: 0.9; }
-
-    /* Links */
-    .form-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        font-size: 12px;
-    }
-
-    .forgot-link {
-        color: #2575fc;
-        text-decoration: none;
-    }
-    .forgot-link:hover { text-decoration: underline; }
-
-    .bottom-link {
-        text-align: center;
-        margin-top: 15px;
-        font-size: 13px;
-    }
-    .register-link { color: #6a11cb; font-weight: 600; text-decoration: none; }
-</style>
-{% endblock %}
+{% block title %}Login - Cold Chain Monitor{% endblock %}
 
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    
-    {% for field in form %}
-    <div class="form-group">
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        <div class="input-wrapper">
-            {{ field }}
-            {% if 'password' in field.name %}
-            <i class="fas fa-eye password-toggle" onclick="togglePassword(this)"></i>
-            {% endif %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header text-center py-3">
+                <i class="fas fa-snowflake fa-3x text-primary mb-2"></i>
+                <h4 class="mb-0">Access Control</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" id="username" required autofocus
+                            placeholder="Enter your username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="password" required
+                            placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-login">Login</button>
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger mt-3 mb-0 py-2 text-center" role="alert">
+                        Invalid credentials
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="card-footer text-center bg-white py-3 border-0 text-muted small">
+                Cold Chain Monitoring System &copy; 2024
+            </div>
         </div>
-        {% if field.errors %}
-        <div style="color: #d32f2f; font-size: 11px; margin-top: 4px;">
-            {{ field.errors.0 }}
-        </div>
-        {% endif %}
     </div>
-    {% endfor %}
-
-    <div class="form-actions">
-        <label style="font-weight: 400; cursor: pointer;">
-            <input type="checkbox" name="remember"> Se souvenir
-        </label>
-        <a href="#" class="forgot-link">Mot de passe oublié ?</a>
-    </div>
-
-    <button type="submit" class="btn-submit">
-        Se connecter
-    </button>
-</form>
-
-<div class="bottom-link">
-    Pas de compte ? <a href="#" class="register-link">S'inscrire</a>
 </div>
 {% endblock %}

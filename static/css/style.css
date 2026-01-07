@@ -1,0 +1,45 @@
+/* Minimal Medical Lab Theme */
+:root {
+    --bs-primary: #0d6efd;
+    /* Standard Bootstrap Blue */
+    --bs-secondary: #6c757d;
+    /* Standard Gray */
+    --bs-body-bg: #f8f9fa;
+    /* Light Gray Background */
+    --bs-body-color: #212529;
+}
+
+body {
+    background-color: var(--bs-body-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--bs-secondary);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 0.75rem;
+    font-weight: 500;
+}
